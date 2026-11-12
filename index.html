@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TerraWaltz</title>
+<meta name="description" content="TerraWaltz: an interactive story map and analytical dashboard that explains how NISAR L-band and S-band radar tracks Earth's surface change through roughness, moisture and centimetre-scale motion.">
+<meta name="theme-color" content="#090D16">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div class="app" id="app">
+
+  <header class="topbar">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 44 44" aria-hidden="true">
+        <circle cx="22" cy="24" r="10" fill="none" stroke="currentColor" stroke-width="1.6" opacity=".55"/>
+        <path d="M12.6 21.5c5 2.6 13.4 2.6 18.8 0M13.4 28c4.8-2 12.6-2 17.2 0" fill="none" stroke="currentColor" stroke-width="1.1" opacity=".4"/>
+        <ellipse cx="22" cy="23" rx="19" ry="7.5" transform="rotate(-28 22 23)" fill="none" stroke="#00F0FF" stroke-width="1.3"/>
+        <circle cx="37.6" cy="12.2" r="2.6" fill="#00F0FF"/>
+        <path d="M33.6 14.6a5.2 5.2 0 0 0 1.5 3.6M30.6 14.2a8.6 8.6 0 0 0 2.4 6.2" fill="none" stroke="#00F0FF" stroke-width="1.4" stroke-linecap="round"/>
+      </svg>
+      <div class="brand-text">
+        <span class="brand-name">TerraWaltz</span>
+        <span class="brand-sub">NISAR Surface Change &amp; Radar Physics Explorer</span>
+      </div>
+    </div>
+    <nav class="movements" id="movements" aria-label="Case studies: the four movements"></nav>
+    <div class="top-actions">
+      <span class="sim-flag" id="sim-flag" tabindex="0">Simulated data<span class="sim-flag-tip">Every scene and number here is generated procedurally to teach radar physics. Nothing on this page is a NISAR measurement.</span></span>
+      <button type="button" class="btn" id="btn-why">Why active radar?</button>
+    </div>
+  </header>
+
+  <main class="workspace">
+
+    <!-- ================= MAP & COMPARISON CANVAS ================= -->
+    <section class="map-panel panel" id="map-panel" aria-label="Map and comparison canvas">
+      <div class="map-toolbar" id="map-toolbar">
+        <div class="tool-group">
+          <span class="tool-label" id="lbl-mode">Sensor</span>
+          <div class="seg" id="seg-mode" role="group" aria-labelledby="lbl-mode">
+            <button type="button" data-v="optical" aria-pressed="false">Optical <small>cloud-obscured</small></button>
+            <button type="button" data-v="sar" aria-pressed="true">NISAR SAR <small>cloud-penetrating</small></button>
+          </div>
+        </div>
+        <div class="tool-group" id="grp-pol">
+          <span class="tool-label" id="lbl-pol">Channel</span>
+          <div class="seg" id="seg-pol" role="group" aria-labelledby="lbl-pol">
+            <button type="button" data-v="HH" aria-pressed="true">HH</button>
+            <button type="button" data-v="HV" aria-pressed="false">HV</button>
+            <button type="button" data-v="VV" aria-pressed="false">VV</button>
+            <button type="button" data-v="INSAR" aria-pressed="false">InSAR phase</button>
+            <button type="button" data-v="RGB" aria-pressed="false">RGB</button>
+          </div>
+        </div>
+        <div class="tool-group" id="grp-band">
+          <span class="tool-label" id="lbl-band">Band</span>
+          <div class="seg" id="seg-band" role="group" aria-labelledby="lbl-band">
+            <button type="button" data-v="L" aria-pressed="true">L <small>24 cm</small></button>
+            <button type="button" data-v="S" aria-pressed="false">S <small>9.4 cm</small></button>
+          </div>
+        </div>
+        <div class="tool-group">
+          <span class="tool-label" id="lbl-layers">Layers</span>
+          <div class="toggles" id="layer-toggles" role="group" aria-labelledby="lbl-layers">
+            <button type="button" class="chip" data-layer="clouds" aria-pressed="true">Clouds</button>
+            <button type="button" class="chip" data-layer="change" aria-pressed="false">Change A→B</button>
+            <button type="button" class="chip" data-layer="labels" aria-pressed="true">Places</button>
+            <button type="button" class="chip" data-layer="grid" aria-pressed="true">Graticule</button>
+            <button type="button" class="chip" data-layer="roi" aria-pressed="false">Sample area</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="map-stage" id="map-stage">
+        <canvas id="map-canvas" aria-label="Simulated satellite scene. Drag to pan, scroll to zoom, hover for pixel values."></canvas>
+        <div class="map-pois" id="map-pois"></div>
+
+        <div class="swipe" id="swipe">
+          <div class="swipe-line"></div>
+          <div class="date-chip a" id="chip-a"><span class="chip-tag">A</span><span class="chip-date">Jan 2020</span><span class="chip-kind">SAR HH</span></div>
+          <div class="date-chip b" id="chip-b"><span class="chip-tag">B</span><span class="chip-date">Sep 2026</span><span class="chip-kind">SAR HH</span></div>
+          <div class="swipe-handle" id="swipe-handle" role="slider" tabindex="0" aria-label="Before and after divider" aria-orientation="horizontal" aria-valuemin="2" aria-valuemax="98" aria-valuenow="50">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l-5 6 5 6M15 6l5 6-5 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+
+        <div class="pol-note" id="pol-note">
+          <button type="button" class="pol-note-toggle" id="pol-note-toggle" aria-expanded="true" aria-controls="pol-note-body">
+            <span class="pol-note-name" id="pol-note-name">HH</span>
+            <span class="pol-note-role" id="pol-note-role">Surface · double-bounce</span>
+            <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5L6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="pol-note-body" id="pol-note-body">
+            <p id="pol-note-text"></p>
+            <dl id="pol-note-keys"></dl>
+            <p class="pol-note-here" id="pol-note-here"></p>
+          </div>
+        </div>
+
+        <div class="map-zoom">
+          <button type="button" id="zoom-in" aria-label="Zoom in">+</button>
+          <button type="button" id="zoom-out" aria-label="Zoom out">−</button>
+          <button type="button" id="zoom-reset" aria-label="Show the whole scene">
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 6V2h4M14 6V2h-4M2 10v4h4M14 10v4h-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+
+        <div class="map-legend" id="map-legend"></div>
+        <div class="map-meta">
+          <div class="scale"><span class="scale-bar" id="scale-bar"></span><span id="scale-label">5 km</span></div>
+          <div class="readout" id="map-readout"></div>
+          <div class="schematic">Procedural scene · schematic geography</div>
+        </div>
+
+        <div class="probe" id="probe" hidden></div>
+        <div class="toast" id="toast" hidden></div>
+        <div class="map-loading" id="map-loading" hidden><span>Acquiring scene…</span></div>
+      </div>
+
+      <div class="timeline" id="timeline">
+        <button type="button" class="play" id="btn-play" aria-label="Play the timeline" aria-pressed="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-play" d="M8 5.5v13l11-6.5z"/><path class="i-pause" d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>
+        </button>
+        <div class="tl-track">
+          <div class="tl-events" id="tl-events"></div>
+          <input type="range" id="tl-range" min="0" max="80" step="1" value="80" aria-label="Date B on the timeline, monthly from January 2020 to September 2026">
+          <div class="tl-years" id="tl-years" aria-hidden="true"></div>
+        </div>
+        <div class="tl-read">
+          <div class="tl-date"><span class="tl-b">B</span><span id="tl-date">Sep 2026</span></div>
+          <div class="tl-sub">
+            <button type="button" class="link" id="btn-pin">Set A to this date</button>
+            <label class="sr-only" for="tl-speed">Playback speed</label>
+            <select id="tl-speed">
+              <option value="0.5">0.5×</option>
+              <option value="1" selected>1×</option>
+              <option value="2">2×</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= STORY · PHYSICS · SIGNALS · DECISIONS ================= -->
+    <aside class="side panel" id="side" aria-label="Story, radar physics, time series and decisions">
+      <nav class="side-nav" id="side-nav" aria-label="Sections">
+        <button type="button" data-target="sec-story" aria-current="true">Story</button>
+        <button type="button" data-target="sec-physics">Physics</button>
+        <button type="button" data-target="sec-signals">Signals</button>
+        <button type="button" data-target="sec-decisions">Decisions</button>
+      </nav>
+      <div class="side-scroll" id="side-scroll">
+
+        <section class="sec" id="sec-story">
+          <div class="case-head" id="case-head"></div>
+          <ol class="chapters" id="chapters"></ol>
+        </section>
+
+        <section class="sec" id="sec-physics">
+          <h2 class="sec-title">Radar physics decoder</h2>
+          <p class="sec-lede">Two properties decide how bright a pixel is: how rough the surface is compared with the wavelength, and how much water it holds. Move the sliders, or click any pixel on the map.</p>
+          <div class="sim">
+            <div class="sim-top">
+              <span class="sim-source" id="sim-source">Preset: Wet mudflat</span>
+              <span class="sim-regime" id="sim-regime" data-tone="bright">Diffuse backscatter</span>
+            </div>
+            <canvas id="sim-canvas" aria-label="Diagram of a radar pulse hitting the surface and scattering"></canvas>
+            <p class="sim-regime-text" id="sim-regime-text"></p>
+            <div class="sim-controls">
+              <div class="sim-field">
+                <div class="sim-field-head"><label for="sim-rough">Surface roughness</label><output id="sim-rough-out" for="sim-rough"></output></div>
+                <input type="range" id="sim-rough" min="0" max="100" step="1" value="30">
+                <div class="sim-scale"><span>mirror-smooth</span><span>ripples · crust</span><span>clods · rubble</span></div>
+              </div>
+              <div class="sim-field">
+                <div class="sim-field-head"><label for="sim-eps">Dielectric constant (moisture)</label><output id="sim-eps-out" for="sim-eps"></output></div>
+                <input type="range" id="sim-eps" min="1" max="80" step="0.5" value="38">
+                <div class="sim-scale"><span>dry · 3</span><span>moist soil · 20</span><span>water · 80</span></div>
+              </div>
+              <div class="sim-toggles">
+                <button type="button" class="chip" id="sim-stems" aria-pressed="false">Vertical stems · trunks · walls</button>
+                <button type="button" class="chip" id="sim-snow" aria-pressed="false">Snowpack</button>
+              </div>
+            </div>
+            <div class="sim-out">
+              <div class="sim-swatch-wrap"><canvas id="sim-swatch" width="56" height="56" aria-hidden="true"></canvas><span>pixel in the HH image</span></div>
+              <div class="sim-bars" id="sim-bars" aria-live="polite"></div>
+            </div>
+            <div class="sim-facts" id="sim-facts"></div>
+            <div class="sim-presets-wrap">
+              <span class="tool-label">Try a surface</span>
+              <div class="sim-presets" id="sim-presets"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="sec" id="sec-signals">
+          <h2 class="sec-title">Signals over time</h2>
+          <p class="sec-lede">Sampled every month from the scene on the map. The line marker follows the timeline; click or drag a chart to move it.</p>
+          <div class="charts-wrap">
+            <div id="charts"></div>
+            <div class="chart-tip" id="chart-tip" hidden></div>
+          </div>
+          <details class="chart-table-wrap">
+            <summary>Show the data as a table</summary>
+            <div class="chart-table" id="chart-table"></div>
+          </details>
+        </section>
+
+        <section class="sec" id="sec-decisions">
+          <h2 class="sec-title">Decision desk</h2>
+          <div class="dec" id="dec"></div>
+        </section>
+
+        <footer class="side-foot">
+          <p><strong>About the data.</strong> TerraWaltz is a teaching tool built for the NASA Space Apps Challenge “Dancing with the SARs”. Scenes, time series and figures are procedurally simulated and the geography is schematic. They illustrate how L-band and S-band radar respond to roughness, moisture, structure and motion. They are not NISAR products and must not be used for operational decisions.</p>
+          <p>NISAR is a joint NASA–ISRO mission launched on 30 July 2025. It carries an L-band radar (24 cm) and an S-band radar (9.4 cm) and revisits land and ice every 12 days. Years before the launch are shown as an L-band analogue.</p>
+          <p class="foot-keys">Keys: <kbd>Space</kbd> play · <kbd>←</kbd> <kbd>→</kbd> step one month · <kbd>1</kbd>–<kbd>4</kbd> switch movement</p>
+        </footer>
+      </div>
+    </aside>
+  </main>
+</div>
+
+<!-- ================= ONBOARDING ================= -->
+<div class="modal" id="modal-why" role="dialog" aria-modal="true" aria-labelledby="why-title" hidden>
+  <div class="modal-card">
+    <button type="button" class="modal-x" data-close aria-label="Close">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    </button>
+    <p class="modal-eyebrow">Before the first dance</p>
+    <h2 id="why-title">Why Active Radar?</h2>
+    <p class="modal-lede">A camera in orbit waits for sunlight to bounce off the ground. A radar brings its own light: microwave pulses centimetres long, which pass through cloud, smoke and darkness.</p>
+    <div class="why-grid">
+      <article class="why-col passive">
+        <svg viewBox="0 0 260 130" aria-hidden="true">
+          <rect x="0" y="104" width="260" height="26" fill="#1c2a22"/>
+          <circle cx="34" cy="26" r="13" fill="#fbbf24"/>
+          <g stroke="#fbbf24" stroke-width="1.6" stroke-linecap="round" opacity=".9"><path d="M52 36l52 26M48 44l40 34"/></g>
+          <g stroke="#fbbf24" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="2 5" opacity=".35"><path d="M118 70l46 24M100 88l22 16M170 96l44-58"/></g>
+          <path d="M92 76c-10 0-16-7-14-15 2-7 10-10 16-7 3-9 15-13 24-7 7-5 19-2 21 7 9 0 14 7 12 14-2 6-8 8-14 8z" fill="#cbd5e1"/>
+          <g transform="translate(214 30)"><rect x="-8" y="-5" width="16" height="10" fill="#c9d6e8"/><rect x="-22" y="-4" width="12" height="8" fill="#3b82f6"/><rect x="10" y="-4" width="12" height="8" fill="#3b82f6"/></g>
+          <path d="M214 46v14" stroke="#64748b" stroke-width="1.4" stroke-dasharray="2 4"/>
+        </svg>
+        <h3>Passive optical</h3>
+        <ul>
+          <li>Records <b>reflected sunlight</b>, 0.4–2.5 µm.</li>
+          <li><b>Blocked</b> by cloud, smoke and haze.</li>
+          <li><b>Blind at night</b> and through the polar winter.</li>
+          <li>Sees colour: the top surface only.</li>
+        </ul>
+      </article>
+      <article class="why-col active">
+        <svg viewBox="0 0 260 130" aria-hidden="true">
+          <rect x="0" y="104" width="260" height="26" fill="#1c2a22"/>
+          <path d="M92 76c-10 0-16-7-14-15 2-7 10-10 16-7 3-9 15-13 24-7 7-5 19-2 21 7 9 0 14 7 12 14-2 6-8 8-14 8z" fill="#cbd5e1" opacity=".5"/>
+          <g transform="translate(46 26) rotate(38)"><rect x="-8" y="-5" width="16" height="10" fill="#c9d6e8"/><rect x="-8" y="-18" width="5" height="11" fill="#3b82f6"/><rect x="-8" y="7" width="5" height="11" fill="#3b82f6"/><path d="M12 -8a10 10 0 0 1 0 16" fill="none" stroke="#00F0FF" stroke-width="2"/></g>
+          <path d="M62 38l86 66" stroke="#00F0FF" stroke-width="2" stroke-linecap="round"/>
+          <g class="why-pulse" fill="none" stroke="#00F0FF" stroke-width="2" stroke-linecap="round"><path d="M82 46l-8 10"/><path d="M104 63l-8 10"/><path d="M126 80l-8 10"/></g>
+          <path d="M142 108L58 44" stroke="#F59E0B" stroke-width="2.4" stroke-linecap="round" transform="translate(-10 8)"/>
+          <path d="M150 104l34-22M150 104l40-6M150 104l22-34" stroke="#5eead4" stroke-width="1.3" stroke-linecap="round" opacity=".7"/>
+          <path d="M196 18a9 9 0 1 0 9 12 7 7 0 0 1-9-12z" fill="#94a3b8"/>
+        </svg>
+        <h3>Active microwave SAR</h3>
+        <ul>
+          <li>Sends <b>its own pulse</b> and times the echo.</li>
+          <li><b>Passes through</b> cloud, smoke and light rain.</li>
+          <li>Works <b>day and night</b>, every pass.</li>
+          <li>Reads <b>roughness, moisture, structure</b>, and by phase, <b>centimetres of motion</b>.</li>
+        </ul>
+      </article>
+    </div>
+    <div class="why-how">
+      <div><b>1</b><span>Drag the divider to compare date A with date B.</span></div>
+      <div><b>2</b><span>Switch channel: HH, HV, VV or InSAR phase.</span></div>
+      <div><b>3</b><span>Press play and follow the charts. Scroll the story on the right.</span></div>
+    </div>
+    <div class="modal-actions">
+      <span class="modal-note">Scenes are simulated for teaching. They are not NISAR measurements.</span>
+      <button type="button" class="btn primary" data-close id="why-start">Start the waltz</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="modal-brief" role="dialog" aria-modal="true" aria-labelledby="brief-modal-title" hidden>
+  <div class="modal-card narrow">
+    <button type="button" class="modal-x" data-close aria-label="Close">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    </button>
+    <h2 id="brief-modal-title">Policy brief as text</h2>
+    <p class="modal-lede">Select all and copy.</p>
+    <textarea id="brief-text" readonly rows="16" aria-label="Policy brief text"></textarea>
+    <div class="modal-actions"><span></span><button type="button" class="btn primary" data-close>Done</button></div>
+  </div>
+</div>
+
+<script src="js/util.js"></script>
+<script src="js/physics.js"></script>
+<script src="js/scenes.js"></script>
+<script src="js/render.js"></script>
+<script src="js/cases.js"></script>
+<script src="js/map.js"></script>
+<script src="js/simulator.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
