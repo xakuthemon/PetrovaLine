@@ -1,105 +1,106 @@
 # TerraWaltz
 
-**NISAR Surface Change & Radar Physics Explorer** — an interactive story map and analytical dashboard for the NASA Space Apps Challenge *"Dancing with the SARs"*.
+**Dancing with the SARs** — an interactive mission experience inspired by the NASA–ISRO NISAR radar satellite, built for the NASA Space Apps Challenge.
 
-TerraWaltz explains how the NASA–ISRO NISAR radar (L-band 1.25 GHz / 24 cm, S-band 3.2 GHz / 9.4 cm) sees through cloud, smoke and darkness, and how three physical quantities turn into pictures of a changing Earth:
+Two radar wavelengths (L-band 24 cm, S-band 9.4 cm) read water, forests, fault lines and ice. TerraWaltz lets you fly from orbit into a working radar console and see how roughness, moisture and phase become pictures of a changing Earth.
 
-- **Surface roughness** — smooth surfaces mirror the pulse away, rough ones scatter it back.
-- **Dielectric constant (moisture)** — wet materials reflect more; liquid water in snow absorbs.
-- **Phase (InSAR)** — two passes compared give ground motion to the centimetre.
-
-> **All imagery and numbers are simulated.** The spacecraft model and the scenes are generated procedurally in the browser and the geography is schematic. They illustrate the physics; they are not NISAR products.
+> **All imagery, telemetry and figures are simulated.** Scenes are generated procedurally in the browser and the geography is schematic. They illustrate the physics; they are not NISAR products.
 
 ## Run it
 
-No build, no install, no network.
-
 ```bash
-open index.html
+npm install
 ```
 
-or serve the folder:
-
 ```bash
-python3 -m http.server 8000
+npm run dev
 ```
 
-A single self-contained file (CSS, JS, fonts and Three.js inlined) is in `dist/terrawaltz.html`. Rebuild it with:
+No server at hand: open `release/terrawaltz.html` directly. It is the whole app in one file (code, styles and fonts inlined).
 
-```bash
-node tools/build-single.mjs
-```
+| Script | What it does |
+|---|---|
+| `npm run dev` | Vite dev server |
+| `npm run typecheck` | `tsc --noEmit` (strict) |
+| `npm run build` | typecheck + production build in `dist/` |
+| `npm run preview` | serve `dist/` |
+| `npm run build:single` | one-file build, copied to `release/terrawaltz.html` |
+| `npm run build:embed` | body-only fragment for sandboxed hosts (no download or print buttons) |
 
-## Two views
+## Three modes, one page
 
-### 01 · Spacecraft
+A floating **Mission Capsule** stays on screen in every mode: mode switcher, sub-satellite latitude / longitude / altitude, next pass, UTC clock. The mode is mirrored in the URL (`#orbit`, `#console`, `#signal`).
 
-An asymmetric split: editorial copy on the left, a WebGL scene of the NISAR spacecraft on the right. The model is built entirely in code with Three.js:
+### Orbit
 
-- **I3K bus** in gold MLI foil (procedural crinkle normal and roughness maps), the octagonal **radar instrument structure** with radiator panels, and the **L / S-band feed aperture**.
-- Two **solar arrays** with cell grid lines, a **9 m truss boom** in two hinged segments with a GPS antenna at the tip.
-- The **12 m drum reflector**: perimeter truss, front and rear geodesic nets, tension ties and a translucent gold mesh surface that casts a mesh-patterned shadow.
-- A **radar beam** reflected 37° off nadir onto a contour drawing of the Caspian shore at Aktau and Lake Karakol. The scan line reveals the simulated SAR image of the same scene used in the console.
+A WebGL scene built entirely in code: the NISAR spacecraft (12 m mesh reflector, 9 m boom, gold-foil bus, solar arrays, feed) over a shadowed Earth with an eclipse rim, and two wave ribbons drawn at the true 24 : 9.4 wavelength ratio. Telemetry lenses float around it and the scene follows the pointer.
 
-Scrolling flies the camera through four stations (overview, reflector, feed, swath). Moving the pointer adds parallax, dragging rotates, and hovering a pin or a part of the model fades in a CAD-style callout. The subsystem list gives the same callouts from the keyboard. If WebGL or Three.js is unavailable, a line schematic stands in and the copy still follows the scroll.
+- **Enter Radar Console** dives the camera down the radar swath into the console.
+- **Follow Current Pass** opens the console on the next target under the simulated ground track.
 
-Below the hero: why active radar, what the echo carries, and an index of the four case studies.
+### Console
 
-### 02 · Console
+A full-viewport radar image with glass instruments floating over it.
 
-| | Movement | Place | What the radar shows |
-|---|---|---|---|
-| 01 | *Adagio* — The Retreating Shore | Caspian Sea · Aktau & Lake Karakol, Kazakhstan | Dielectric contrast between water and exposed seabed; HH/HV on reed beds; port settlement in InSAR |
-| 02 | *Allegro* — The Flood Pulse | Rio Paraguai floodplain · Pantanal, Brazil | L-band double-bounce under the canopy (HH); clearing in HV; water-level change from InSAR |
-| 03 | *Presto* — The Rupture | East Anatolian Fault · Kahramanmaraş (San Andreas context) | Co-seismic fringes, damage proxy, a subsiding urban basin |
-| 04 | *Largo* — The Ice Stream | Jakobshavn Isbræ · Greenland | Calving-front retreat, melt-season backscatter drop, polar night, 12-day ice motion |
+| | Case | What the radar shows |
+|---|---|---|
+| 01 | Caspian Sea · Aktau & Lake Karakol | shoreline retreat, wetland loss, port settlement |
+| 02 | Pantanal wetlands | flood pulse under the canopy, clearing |
+| 03 | Kahramanmaraş fault | co-seismic fringes, damage, a subsiding basin |
+| 04 | Jakobshavn glacier | calving-front retreat, melt, ice motion |
 
-- **Before / after divider** — drag it, or focus it and use the arrow keys. Date A is the baseline, date B follows the timeline. *Set A to this date* turns any month into the baseline, which is how you isolate an InSAR pair.
-- **Sensor** — *Optical (cloud-obscured)* versus *NISAR SAR (cloud-penetrating)*. Toggle the cloud layer to see what a clear sky would show.
-- **Channel** — HH, HV, VV, InSAR phase and an RGB composite, each with a plain-language note on what the pulse is reacting to. Hover a button to preview its note.
-- **Band** — L or S. Changes fringe spacing, canopy penetration and apparent roughness.
-- **Layers** — clouds, A→B change mask, places, graticule, chart sample area.
-- **Probe** — hover any pixel for coordinates, surface class, σ⁰ at A and B, displacement and coherence. Click to send the pixel to the Physics Decoder.
-- **Timeline** — play / pause, scrub, jump to events. Charts stay in sync; click or drag a chart to scrub.
-- **Story** — scroll the sidebar; each chapter sets the map to the view it describes.
-- **Physics Decoder** — roughness and dielectric sliders with a live ray diagram (specular, diffuse, double-bounce, volume, absorption).
-- **Decision desk** — drivers, impacts and a policy brief you can copy, download as Markdown or print.
-- **Why Active Radar?** — the primer dialog, from the button in the nav.
+- **Case switcher** (top): live thumbnails, acquisition badge and headline metric. Switching retargets the view.
+- **Before / after divider**: drag the lens handle, or focus it and use the arrow keys. Date A is the baseline; date B follows the timeline.
+- **Channel dock**: HH, HV, VV, InSAR phase and false-colour RGB. **Sweep** cycles them. Also here: Optical / SAR, L or S band, change mask, clouds.
+- **Probe**: hover a pixel for coordinates, surface class and σ⁰; click to pin it in the decoder.
+- **Physics Decoder** (right drawer, a sheet on phones): three scattering diagrams — surface, volume, double-bounce. Selecting one highlights the pixels where that mechanism dominates. Shows dominant return, HH/HV ratio, coherence, confidence, what-if sliders for roughness and dielectric constant, and an actionable insight.
+- **Timeline** (bottom): 2020–2026, three traces per case, draggable playhead, play / pause, *Set A here*.
+- **Export Mission Brief**: Markdown, JSON or plain text; choose sections; download, copy or print a dossier.
 
-Keys in the console: `Space` play · `←` `→` one month · `1`–`4` switch movement.
+Keys: `Space` play · `←` `→` one month · `1`–`4` switch case.
 
-## Design system
+### Signal
 
-Flat surfaces, hairline rules, 2–3 px radii, no blur, glow or decorative gradients. One signal colour (`#00F0FF`) for active data elements, amber for alerts. Inter for text, JetBrains Mono for telemetry, coordinates, bands and timestamps, tabular numerals throughout. Motion is linear or ease-out and short; `prefers-reduced-motion` stops the drift and the pulses.
+A scroll essay in four chapters — WATER, FOREST, FAULT, ICE — each with an animated dual-band diagram of how 24 cm and 9.4 cm waves meet that medium, and a link that opens the matching case in the console. It ends with a portal back to the console.
 
 ## How it works
 
 ```
-index.html              both views and the dialogs
-css/styles.css          design tokens and layout
-js/util.js              seeded noise, helpers
-js/physics.js           backscatter model (Fresnel reflectivity, roughness, volume, double-bounce)
-js/scenes.js            four procedural scenes: date → per-pixel surface state
-js/render.js            state → SAR amplitude, interferogram, optical view with clouds / night
-js/cases.js             story chapters, channel notes, decision content
-js/map.js               comparison canvas, pan / zoom, probe, graticule, places
-js/simulator.js         Radar Physics Decoder widget
-js/charts.js            synchronized SVG time series
-js/spacecraft.js        procedural NISAR model, lighting, beam and terrain (Three.js)
-js/hero.js              scroll stations, callouts, pointer parallax and drag
-js/app.js               state, view routing (#mission / #console) and wiring
-vendor/three.min.js     Three.js r149 (MIT), vendored so the app runs offline
-tools/build-single.mjs  bundles everything into dist/terrawaltz.html
+src/
+  main.tsx, App.tsx, index.css     entry, mode layout, Liquid Glass material and tokens
+  state/mission.ts                 one zustand store for every control
+  data/cases.ts, data/orbit.ts     case content, simulated orbit telemetry
+  engine/
+    physics.ts                     backscatter model (Fresnel, roughness, volume, double-bounce)
+    scenes.ts                      four procedural scenes: date -> per-pixel surface state
+    render.ts                      state -> SAR amplitude, interferogram, optical view, overlays
+    mapEngine.ts                   comparison canvas, pan / zoom, probe, graticule
+    brief.ts                       mission brief in Markdown / JSON / text
+  three/
+    SatelliteModel.ts              procedural NISAR spacecraft
+    apsisScene.ts                  Earth, orbit, wave ribbons, camera rig and dive
+  components/
+    glass/                         LiquidGlassPanel, LensPill, MagneticButton, SVG filters
+    MissionCapsule.tsx, ApsisBackdrop.tsx
+    orbit/  console/  signal/      the three modes
+tools/make-embed.mjs               post-processing for the one-file builds
+release/terrawaltz.html            committed one-file build
 ```
 
-Each scene maps a date to a per-pixel state (roughness, dielectric constant, vegetation volume, vertical structure, coherence, line-of-sight displacement). One backscatter function turns that state into HH, HV and VV. The same function drives the Physics Decoder, so the sliders and the map obey the same rules. Chart series are sampled from the scenes themselves, month by month.
+Each scene maps a date to a per-pixel state (roughness, dielectric constant, vegetation volume, vertical structure, coherence, line-of-sight displacement). One backscatter function turns that state into HH, HV and VV; the same function drives the decoder sliders and the mechanism highlight, so the map and the diagrams obey the same rules. Timeline traces are sampled from the scenes month by month.
 
-The model is a teaching approximation tuned to typical L-band values (calm water ≈ −28 dB, forest HV ≈ −13 dB, flooded forest HH ≈ −4 dB). Interferograms wrap `2 × displacement / wavelength`, so one fringe is 11.9 cm at L-band and 4.7 cm at S-band.
+The model is a teaching approximation tuned to typical L-band values (calm water ≈ −28 dB, forest HV ≈ −13 dB, flooded forest HH ≈ −4 dB). Interferograms wrap `2 × displacement / wavelength`: one fringe is 11.9 cm at L-band and 4.7 cm at S-band.
 
-## Notes
+Stack: React 18, Vite, TypeScript (strict), Tailwind, zustand, Motion, Three.js, lucide-react.
 
-- **Spacecraft model.** Proportions follow the published subsystem dimensions (12 m reflector, 9 m boom); everything else is an illustration, not an engineering model.
-- **Timeline.** NISAR launched on 30 July 2025. Earlier years are shown as an L-band analogue so each story has a baseline.
-- **Chart colours** were checked for colour-vision-deficiency separation and contrast on the panel surface.
-- **Licences.** Inter and JetBrains Mono are bundled under the SIL Open Font License (`assets/fonts/`). Three.js is MIT (`vendor/three.LICENSE.txt`).
-- **Accessibility.** Keyboard access throughout, visible focus, a data-table view for the charts, and reduced-motion support.
+## Known limits
+
+- **Simulated data.** Nothing here is a mission product; the capsule and every exported brief say so.
+- **Edge refraction is Chromium-only.** The glass bends its backdrop through an SVG displacement filter. Safari and Firefox get blur, rim light and pointer sheen without the distortion. Slow devices drop the distortion, then the heavy blur, automatically.
+- **Timeline.** NISAR launched on 30 July 2025. Earlier years are shown as an L-band analogue so each case has a baseline.
+- **Spacecraft model.** Proportions follow the published dimensions (12 m reflector, 9 m boom); the rest is an illustration.
+- **Motion.** With `prefers-reduced-motion`, the camera dive becomes a cross-fade and ambient loops stop.
+
+## Licences
+
+Inter, JetBrains Mono and Instrument Serif are bundled from `@fontsource` under the SIL Open Font License. Three.js, React, Motion, zustand and lucide are MIT / ISC.
