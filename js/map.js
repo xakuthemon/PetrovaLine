@@ -239,9 +239,9 @@
       const lon0 = lonAt(0), lon1 = lonAt(cssW), lat0 = latAt(0), lat1 = latAt(cssH);
       const st = niceStep(lon1 - lon0, 5), dg = st < 0.02 ? 3 : 2;
       ctx.lineWidth = 1;
-      ctx.strokeStyle = 'rgba(0,240,255,0.16)';
-      ctx.fillStyle = 'rgba(190,235,245,0.85)';
-      ctx.font = '500 10px "IBM Plex Mono", ui-monospace, monospace';
+      ctx.strokeStyle = 'rgba(238,242,246,0.13)';
+      ctx.fillStyle = 'rgba(238,242,246,0.78)';
+      ctx.font = '500 10px "JetBrains Mono", ui-monospace, monospace';
       ctx.shadowColor = 'rgba(0,0,0,0.9)'; ctx.shadowBlur = 3;
       ctx.beginPath();
       for (let lon = Math.ceil(lon0 / st) * st; lon < lon1; lon += st) {
@@ -261,14 +261,14 @@
       const r = scene.roi;
       const x = r.x0 * view.s + view.ox, y = r.y0 * view.s + view.oy;
       const w = (r.x1 - r.x0) * view.s, hh = (r.y1 - r.y0) * view.s;
-      ctx.lineWidth = 1.5;
+      ctx.lineWidth = 1;
       ctx.setLineDash([5, 4]);
       ctx.strokeStyle = 'rgba(0,0,0,0.6)'; ctx.strokeRect(x + 1, y + 1, w, hh);
       ctx.strokeStyle = '#00f0ff'; ctx.strokeRect(x, y, w, hh);
       ctx.setLineDash([]);
-      ctx.font = '500 10px "IBM Plex Mono", ui-monospace, monospace';
+      ctx.font = '500 10px "JetBrains Mono", ui-monospace, monospace';
       ctx.shadowColor = 'rgba(0,0,0,0.95)'; ctx.shadowBlur = 4;
-      ctx.fillStyle = '#9ff7ff';
+      ctx.fillStyle = '#eef2f6';
       ctx.fillText('CHART SAMPLE AREA', x + 2, y - 5);
       ctx.shadowBlur = 0;
     }

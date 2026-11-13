@@ -17,7 +17,8 @@
     playing: false, speed: 1, chapter: 0,
   };
   let caseDef = null, scene = null, series = null;
-  let map, sim, charts;
+  let map, sim, charts, hero;
+  let view = '', consoleReady = false, pendingCase = 0;
   let lastMonth = -1, previewPol = null;
   let storyObserver = null, suppressStory = 0, bandChapter = -1;
   const loaded = {};
@@ -118,9 +119,10 @@
   function buildMovements() {
     const nav = $('#movements');
     TW.cases.forEach((c, i) => {
-      const b = h('button.movement', { type: 'button', 'aria-pressed': 'false' },
-        h('span.mv-num', { text: c.numeral }),
-        h('span.mv-text', null, h('span.mv-title', { text: c.title }), h('span.mv-place', { text: c.tempo + ' · ' + c.short })));
+      const b = h('button.case', { type: 'button', 'aria-pressed': 'false' },
+        h('span.case-n', { text: String(i + 1).padStart(2, '0') }),
+        h('span.case-t', { text: c.title }),
+        h('span.case-p', { text: c.tempo + ' · ' + c.short }));
       b.addEventListener('click', () => selectCase(i));
       nav.appendChild(b);
     });
@@ -129,7 +131,7 @@
   function buildStory() {
     const head = $('#case-head');
     head.textContent = '';
-    head.appendChild(h('p.case-tempo', null, h('span.case-num', { text: 'Movement ' + caseDef.numeral }), h('span.case-tempo-word', { text: caseDef.tempo })));
+    head.appendChild(h('p.case-tempo', null, h('span.case-num', { text: 'Movement ' + String(state.ci + 1).padStart(2, '0') }), h('span.case-tempo-word', { text: caseDef.tempo })));
     head.appendChild(h('h1.case-title', { text: caseDef.title }));
     head.appendChild(h('p.case-place', null, caseDef.place, caseDef.tag ? h('span.case-tag', { text: caseDef.tag }) : null));
     head.appendChild(h('p.case-summary', { text: caseDef.summary }));
@@ -139,7 +141,7 @@
     list.textContent = '';
     caseDef.chapters.forEach((ch, i) => {
       const li = h('li.chapter', { 'data-i': i },
-        h('span.ch-marker', { 'aria-hidden': 'true', text: String(i + 1) }),
+        h('span.ch-marker', { 'aria-hidden': 'true', text: String(i + 1).padStart(2, '0') }),
         h('div.ch-body', null,
           h('h3', null, h('button', { type: 'button', text: ch.title })),
           h('p', { text: ch.body }),
@@ -403,7 +405,6 @@
   }
   function closeModal(m) {
     m.hidden = true;
-    if (m.id === 'modal-why') U.store.set('tw-onboarded', '1');
     if (lastFocus && lastFocus.focus) lastFocus.focus();
   }
   $$('.modal').forEach((m) => {
@@ -500,23 +501,8 @@
       render();
     });
 
-    $('#btn-why').addEventListener('click', () => openModal('modal-why'));
     $('#side-nav').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) goToSection(b.dataset.target); });
     $('#pol-note-toggle').addEventListener('click', () => setNoteOpen($('#pol-note').classList.contains('collapsed')));
-
-    document.addEventListener('keydown', (e) => {
-      const open = $$('.modal').filter((m) => !m.hidden)[0];
-      if (e.key === 'Escape' && open) { closeModal(open); return; }
-      if (open) return;
-      const t = e.target, tag = t && t.tagName;
-      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (t && t.getAttribute && t.getAttribute('role') === 'slider')) return;
-      if (e.key === ' ' && tag !== 'BUTTON') { setPlaying(!state.playing); e.preventDefault(); }
-      else if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
-        setPlaying(false);
-        state.m = U.clamp(Math.round(state.m) + (e.key === 'ArrowRight' ? 1 : -1), 0, U.M_MAX);
-        renderFrame(); syncControls(); e.preventDefault();
-      } else if (/^[1-4]$/.test(e.key) && !e.metaKey && !e.ctrlKey && !e.altKey) selectCase(Number(e.key) - 1);
-    });
 
     let io = observeSections();
     const onMq = () => { observeStory(); if (io) io.disconnect(); io = observeSections(); };
@@ -532,7 +518,10 @@
   /* ====================================================================== *
    * Boot
    * ====================================================================== */
-  function boot() {
+  /** Build the console the first time it is shown (it needs real layout sizes). */
+  function ensureConsole() {
+    if (consoleReady) return;
+    consoleReady = true;
     buildMovements();
     map = TW.MapView($('#map-panel'), {
       onPick(inf) {
@@ -547,9 +536,63 @@
     const noteOpen = U.store.get('tw-note');
     setNoteOpen(noteOpen == null ? window.innerWidth > 700 : noteOpen === '1');
     wire();
-    selectCase(0);
-    if (!U.store.get('tw-onboarded')) openModal('modal-why');
-    window.TW.app = { state, selectCase, applyChapter, setPlaying, render };
+    selectCase(pendingCase);
+  }
+
+  function showView(name) {
+    if (name !== 'console') name = 'mission';
+    if (name === view) return;
+    view = name;
+    $('#view-mission').hidden = name !== 'mission';
+    $('#view-console').hidden = name !== 'console';
+    document.body.dataset.view = name;
+    $$('.nav-views a').forEach((a) => { if (a.dataset.view === name) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
+    if (name === 'console') {
+      hero.hide();
+      if (consoleReady) { map.resize(); render(); } else ensureConsole();
+    } else {
+      if (consoleReady) setPlaying(false);
+      hero.show();
+    }
+  }
+  function setHash(name) {
+    try { if (location.hash !== '#' + name) location.hash = name; } catch (e) { /* hash unavailable */ }
+  }
+  function openConsole(i) {
+    if (!consoleReady) pendingCase = i == null ? 0 : i;
+    setHash('console');
+    showView('console');
+    if (i != null && state.ci !== i) selectCase(i);
+  }
+  function route() {
+    let name = '';
+    try { name = (location.hash || '').replace('#', ''); } catch (e) { /* ignore */ }
+    showView(name === 'console' ? 'console' : 'mission');
+  }
+
+  function boot() {
+    hero = TW.Hero($('#view-mission'), {
+      openCase: openConsole,
+      openWhy: () => openModal('modal-why'),
+    });
+    $('#btn-why').addEventListener('click', () => openModal('modal-why'));
+    document.addEventListener('keydown', (e) => {
+      const open = $$('.modal').filter((m) => !m.hidden)[0];
+      if (e.key === 'Escape' && open) { closeModal(open); return; }
+      if (open || view !== 'console' || !consoleReady) return;
+      const t = e.target, tag = t && t.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (t && t.getAttribute && t.getAttribute('role') === 'slider')) return;
+      if (e.key === ' ' && tag !== 'BUTTON') { setPlaying(!state.playing); e.preventDefault(); }
+      else if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+        setPlaying(false);
+        state.m = U.clamp(Math.round(state.m) + (e.key === 'ArrowRight' ? 1 : -1), 0, U.M_MAX);
+        renderFrame(); syncControls(); e.preventDefault();
+      } else if (/^[1-4]$/.test(e.key) && !e.metaKey && !e.ctrlKey && !e.altKey) selectCase(Number(e.key) - 1);
+    });
+
+    window.addEventListener('hashchange', route);
+    route();
+    window.TW.app = { state, selectCase, applyChapter, setPlaying, render, showView, openConsole };
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);

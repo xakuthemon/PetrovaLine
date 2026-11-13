@@ -178,9 +178,9 @@
     }
     function label(txt, x, y, color, align) {
       ctx.save();
-      ctx.font = '500 10.5px "IBM Plex Mono", ui-monospace, monospace';
+      ctx.font = '500 10px "JetBrains Mono", ui-monospace, monospace';
       ctx.textAlign = align || 'left';
-      ctx.fillStyle = 'rgba(9,13,22,0.72)';
+      ctx.fillStyle = 'rgba(6,8,11,0.82)';
       const w = ctx.measureText(txt).width;
       const bx = align === 'right' ? x - w - 4 : align === 'center' ? x - w / 2 - 4 : x - 4;
       ctx.fillRect(bx, y - 10, w + 8, 14);
@@ -194,9 +194,7 @@
       const still = U.reducedMotion();
       const ph = still ? 0.35 : (now / 1700) % 1;
       ctx.clearRect(0, 0, cw, ch);
-      const sky = ctx.createLinearGradient(0, 0, 0, ch * 0.66);
-      sky.addColorStop(0, '#0a1120'); sky.addColorStop(1, '#101c30');
-      ctx.fillStyle = sky; ctx.fillRect(0, 0, cw, ch);
+      ctx.fillStyle = '#06080b'; ctx.fillRect(0, 0, cw, ch);
 
       // ground
       const gy0 = ch * 0.66;
@@ -208,9 +206,6 @@
       for (let x = 0; x <= cw; x += 3) ctx.lineTo(x, groundY(x));
       ctx.lineTo(cw, groundY(cw)); ctx.lineTo(cw, ch); ctx.closePath();
       ctx.fillStyle = gcol; ctx.fill();
-      const shade = ctx.createLinearGradient(0, gy0, 0, ch);
-      shade.addColorStop(0, 'rgba(9,13,22,0)'); shade.addColorStop(1, 'rgba(9,13,22,0.62)');
-      ctx.fillStyle = shade; ctx.fillRect(0, gy0 - 14, cw, ch - gy0 + 14);
       ctx.beginPath();
       for (let x = 0; x <= cw; x += 3) { const y = groundY(x); if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y); }
       ctx.strokeStyle = st.eps > 55 && !st.snow ? 'rgba(160,230,255,0.85)' : 'rgba(255,255,255,0.35)';

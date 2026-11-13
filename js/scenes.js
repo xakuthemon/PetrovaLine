@@ -324,6 +324,8 @@
       id: 'caspian', W, H, widthKm: WK, bounds: boundsFor(43.585, 51.235, WK), insar: 'cumulative',
       init, compute, metrics, anchors,
       get illum() { return illum; }, get roi() { return roi; },
+      /** Elevation relative to the January 2020 sea level (m), one value per pixel. */
+      get height() { return h; },
       sky(t) {
         const fr = t - Math.floor(t), winter = 0.5 + 0.5 * Math.cos(TAU * (fr - 0.04));
         return { cover: 0.42 + 0.26 * winter + 0.1 * Math.sin(t * 9.1), smoke: 0.12 * (1 - winter), light: 1 };
