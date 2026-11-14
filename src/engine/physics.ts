@@ -1,5 +1,5 @@
 /*
- * TerraWaltz — simplified radar backscatter model.
+ * Petrova Line — simplified radar backscatter model.
  *
  * One function drives the map scenes and the Physics Decoder, so the sliders
  * and the pixels obey the same rules. It is a teaching approximation (Fresnel

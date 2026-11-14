@@ -1,4 +1,4 @@
-/* TerraWaltz — shared math, seeded noise and formatters. */
+/* Petrova Line — shared math, seeded noise and formatters. */
 
 export const clamp = (x: number, a: number, b: number): number => (x < a ? a : x > b ? b : x);
 export const sat = (x: number): number => (x < 0 ? 0 : x > 1 ? 1 : x);

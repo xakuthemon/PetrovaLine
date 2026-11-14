@@ -1,5 +1,5 @@
 /*
- * TerraWaltz — pixel renderers.
+ * Petrova Line — pixel renderers.
  * Turns a scene state into SAR amplitude (HH / HV / VV / RGB composite),
  * a wrapped InSAR interferogram, or an optical view with clouds, smoke and night.
  */
@@ -39,16 +39,15 @@ function ensureSky() {
   ATM2 = fbmField(W, H, 904, 3, { oct: 3 });
 }
 
-// Cyclic rainbow for wrapped phase; zero phase sits on radar cyan.
+// Cyclic colour map for wrapped phase in the brand colours:
+// cream → crimson → ink → steel → cream, smooth all the way round so a fringe has no seam.
 export const RAINBOW = new Uint8Array(256 * 3);
 (function () {
+  const stops: [number, number, number][] = [[244, 236, 227], [211, 36, 63], [36, 30, 52], [126, 155, 208], [244, 236, 227]];
   for (let k = 0; k < 256; k++) {
-    const hgl = ((k / 256 + 0.5) % 1) * 6;
-    const c = 0.9, x = c * (1 - Math.abs((hgl % 2) - 1)), m = 0.1;
-    let r = 0, g = 0, b = 0;
-    if (hgl < 1) { r = c; g = x; } else if (hgl < 2) { r = x; g = c; } else if (hgl < 3) { g = c; b = x; }
-    else if (hgl < 4) { g = x; b = c; } else if (hgl < 5) { r = x; b = c; } else { r = c; b = x; }
-    RAINBOW[k * 3] = (r + m) * 255; RAINBOW[k * 3 + 1] = (g + m) * 255; RAINBOW[k * 3 + 2] = (b + m) * 255;
+    const f = (k / 256) * 4, i = Math.floor(f), t = f - i, u = t * t * (3 - 2 * t);
+    const a = stops[i], c = stops[i + 1];
+    RAINBOW[k * 3] = a[0] + (c[0] - a[0]) * u; RAINBOW[k * 3 + 1] = a[1] + (c[1] - a[1]) * u; RAINBOW[k * 3 + 2] = a[2] + (c[2] - a[2]) * u;
   }
 })();
 
@@ -259,8 +258,8 @@ export function changeOverlay(img: Uint8ClampedArray, dbA: Float32Array, dbB: Fl
     let a = (m - 2.5) / 5;
     a = (a > 1 ? 1 : a) * 0.78;
     const j = i * 4;
-    if (d > 0) { img[j] += (0 - img[j]) * a; img[j + 1] += (240 - img[j + 1]) * a; img[j + 2] += (255 - img[j + 2]) * a; }
-    else { img[j] += (245 - img[j]) * a; img[j + 1] += (158 - img[j + 1]) * a; img[j + 2] += (11 - img[j + 2]) * a; }
+    if (d > 0) { img[j] += (126 - img[j]) * a; img[j + 1] += (175 - img[j + 1]) * a; img[j + 2] += (240 - img[j + 2]) * a; }
+    else { img[j] += (226 - img[j]) * a; img[j + 1] += (36 - img[j + 1]) * a; img[j + 2] += (63 - img[j + 2]) * a; }
   }
 }
 
@@ -296,9 +295,9 @@ export function mechanismOverlay(img: Uint8ClampedArray, S: SceneState, band: Ba
       hits++;
       const lum = (img[j] + img[j + 1] + img[j + 2]) / 3;
       const k = 0.35 + (lum / 255) * 0.65;
-      img[j] += (245 * k + 30 - img[j]) * 0.62;
-      img[j + 1] += (176 * k + 22 - img[j + 1]) * 0.62;
-      img[j + 2] += (65 * k + 8 - img[j + 2]) * 0.62;
+      img[j] += (211 * k + 44 - img[j]) * 0.66;
+      img[j + 1] += (36 * k + 8 - img[j + 1]) * 0.66;
+      img[j + 2] += (63 * k + 14 - img[j + 2]) * 0.66;
     } else {
       img[j] *= 0.34; img[j + 1] *= 0.36; img[j + 2] *= 0.4;
     }

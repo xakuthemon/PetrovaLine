@@ -1,5 +1,5 @@
 /*
- * TerraWaltz — procedural scene engine.
+ * Petrova Line — procedural scene engine.
  *
  * Each scene turns a date (decimal year) into a per-pixel surface state:
  *   R roughness · E dielectric constant · V volume scatterers · D vertical structure

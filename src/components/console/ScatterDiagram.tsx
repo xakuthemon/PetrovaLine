@@ -1,11 +1,11 @@
 /* Animated vector diagram of one scattering mechanism. */
 import type { Mechanism } from '../../engine/render';
 
-const IN = '#9CCBEB', OUT = '#E4C68F', INK = '#F2EEE6';
+const IN = '#D3243F', OUT = '#F4ECE3', INK = '#F4ECE3';
 
 export function ScatterDiagram({ kind, active }: { kind: Mechanism; active: boolean }) {
   const run = { strokeDasharray: '5 5', animation: active ? 'dash-run 1.3s linear infinite' : 'none' } as const;
-  const dim = active ? 1 : 0.55;
+  const dim = active ? 1 : 0.5;
   return (
     <svg viewBox="0 0 120 76" className="h-full w-full" aria-hidden="true" style={{ opacity: dim }}>
       {/* ground */}
@@ -17,12 +17,11 @@ export function ScatterDiagram({ kind, active }: { kind: Mechanism; active: bool
           <path d="M58 60 L104 6" stroke={INK} strokeOpacity="0.85" strokeWidth="1.6" fill="none" style={run} />
           <path d="M101 4 l5 1 l-2.6 5" stroke={INK} strokeOpacity="0.85" strokeWidth="1.4" fill="none" />
           <path d="M58 60 L44 44" stroke={OUT} strokeOpacity="0.5" strokeWidth="1" fill="none" strokeDasharray="2 3" />
-          <text x="76" y="44" fontSize="6.5" fill={INK} fillOpacity="0.6" fontFamily="'JetBrains Mono Variable', monospace">mirrored away</text>
         </>
       )}
       {kind === 'volume' && (
         <>
-          <g fill="#10B981" fillOpacity="0.18" stroke="#10B981" strokeOpacity="0.55" strokeWidth="0.8">
+          <g fill="#7E9BD0" fillOpacity="0.2" stroke="#7E9BD0" strokeOpacity="0.6" strokeWidth="0.8">
             <ellipse cx="48" cy="28" rx="20" ry="13" /><ellipse cx="74" cy="32" rx="22" ry="14" /><ellipse cx="60" cy="20" rx="16" ry="10" />
           </g>
           <path d="M52 40 V62 M74 44 V62" stroke={INK} strokeOpacity="0.4" strokeWidth="1.4" />

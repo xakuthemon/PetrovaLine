@@ -1,5 +1,5 @@
 /*
- * TerraWaltz — the single mission state every control reads and writes.
+ * Petrova Line — the single mission state every control reads and writes.
  */
 import { create } from 'zustand';
 import { clamp, M_MAX } from '../engine/util';
@@ -32,6 +32,9 @@ export interface MissionState {
   change: boolean;
   drawerOpen: boolean;
   exportOpen: boolean;
+  aboutOpen: boolean;
+  /** place names drawn on the map */
+  labels: boolean;
   /** pixel under the cursor, and the pixel pinned by a click */
   probe: ProbeInfo | null;
   pinned: ProbeInfo | null;
@@ -49,8 +52,10 @@ export interface MissionState {
   setPlaying(p: boolean): void;
   setSpeed(s: number): void;
   setMechanism(m: Mechanism | null): void;
-  toggle(key: 'clouds' | 'change' | 'drawerOpen'): void;
+  toggle(key: 'clouds' | 'change' | 'drawerOpen' | 'labels'): void;
   setExportOpen(o: boolean): void;
+  setAboutOpen(o: boolean): void;
+  setDrawer(o: boolean): void;
   setProbe(p: ProbeInfo | null): void;
   setPinned(p: ProbeInfo | null): void;
   setStats(s: MapStats): void;
@@ -89,6 +94,8 @@ export const useMission = create<MissionState>((set, get) => ({
   change: false,
   drawerOpen: typeof window === 'undefined' ? true : window.innerWidth >= 1024,
   exportOpen: false,
+  aboutOpen: false,
+  labels: false,
   probe: null,
   pinned: null,
   stats: { mechShare: null, meanCoh: 1, sky: null },
@@ -120,6 +127,8 @@ export const useMission = create<MissionState>((set, get) => ({
   setMechanism(mechanism) { set({ mechanism, ...(mechanism ? { sensor: 'sar' as Sensor } : {}) }); },
   toggle(key) { set((s) => ({ [key]: !s[key] }) as Partial<MissionState>); },
   setExportOpen(exportOpen) { set({ exportOpen }); },
+  setAboutOpen(aboutOpen) { set({ aboutOpen }); },
+  setDrawer(drawerOpen) { set({ drawerOpen }); },
   setProbe(probe) { set({ probe }); },
   setPinned(pinned) { set({ pinned }); },
   setStats(stats) { set({ stats }); },
@@ -135,4 +144,8 @@ if (typeof window !== 'undefined') {
 export const tOf = (month: number): number => 2020 + month / 12;
 
 // exposed for automated checks
-if (typeof window !== 'undefined') (window as unknown as { __terrawaltz: typeof useMission }).__terrawaltz = useMission;
+if (typeof window !== 'undefined') {
+  const w = window as unknown as { __petrova: typeof useMission; __terrawaltz: typeof useMission };
+  w.__petrova = useMission;
+  w.__terrawaltz = useMission;
+}

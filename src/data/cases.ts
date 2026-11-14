@@ -1,5 +1,5 @@
 /*
- * TerraWaltz — mission cases.
+ * Petrova Line — mission cases.
  * Month indices count from January 2020 (0) to September 2026 (80).
  * Context sentences describe the real places; every number on the map and in the
  * traces comes from the simulated scenario in engine/scenes.ts.

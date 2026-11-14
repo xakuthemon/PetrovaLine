@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 /*
  * Post-processing for the one-file builds.
- *   --release      dist-single/index.html -> release/terrawaltz.html (opens from disk, no server)
+ *   --release      dist-single/index.html -> release/petrova-line.html (opens from disk, no server)
  *   --embed [out]  dist-embed/index.html  -> a body-only fragment for sandboxed hosts that supply
- *                  their own <html>/<head> (default: dist-embed/terrawaltz.fragment.html)
+ *                  their own <html>/<head> (default: dist-embed/petrova-line.fragment.html)
  */
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
@@ -22,18 +22,18 @@ function block(html, tag) {
 
 if (args.includes('--release')) {
   const html = readFileSync(resolve(root, 'dist-single/index.html'), 'utf8');
-  const out = resolve(root, 'release/terrawaltz.html');
+  const out = resolve(root, 'release/petrova-line.html');
   mkdirSync(dirname(out), { recursive: true });
   writeFileSync(out, html);
-  console.log('release/terrawaltz.html  ' + kb(html));
+  console.log('release/petrova-line.html  ' + kb(html));
 }
 
 if (args.includes('--embed')) {
   const html = readFileSync(resolve(root, 'dist-embed/index.html'), 'utf8');
   const next = args[args.indexOf('--embed') + 1];
-  const out = resolve(root, next && !next.startsWith('--') ? next : 'dist-embed/terrawaltz.fragment.html');
+  const out = resolve(root, next && !next.startsWith('--') ? next : 'dist-embed/petrova-line.fragment.html');
   const fragment = [
-    '<title>TerraWaltz</title>',
+    '<title>Petrova Line</title>',
     '<meta name="claude:viewport-fit-sides" content="cover">',
     block(html, 'style'),
     '<div id="root"></div>',

@@ -1,5 +1,5 @@
 /*
- * TerraWaltz — procedural NISAR spacecraft model (Three.js).
+ * Petrova Line — procedural NISAR spacecraft model (Three.js).
  *
  * Everything is generated in code: geometry, the crinkled MLI foil normal map,
  * the solar-cell and wire-mesh textures. No model or image files are loaded.

@@ -1,5 +1,5 @@
 /*
- * TerraWaltz landing stage: one WebGL scene that the scroll film moves through.
+ * Petrova Line landing stage: one WebGL scene that the scroll film moves through.
  *
  * A NASA Blue Marble globe graded to the page's night palette, with a gold limb
  * ring, a few dozen hairline orbits with satellites, NISAR on its 747 km
@@ -16,7 +16,7 @@ import type { SlabResult } from '../landing/slabData';
 import dayUrl from '../assets/earth/day.jpg';
 import nightUrl from '../assets/earth/night.jpg';
 
-export interface Intro { ring: number; globe: number; orbits: number; sats: number; push: number }
+export interface Intro { ring: number; globe: number; orbits: number; sats: number; push: number; trail: number }
 export interface Anchor { x: number; y: number; on: number }
 export interface LandingHandle {
   /** intro build values, animated by the page (0 → 1) */
@@ -32,8 +32,8 @@ export interface LandingHandle {
   onAnchor: ((a: Anchor) => void) | null;
 }
 
-const GOLD = new THREE.Color('#D9C08E'), GOLD_HI = new THREE.Color('#F2DDB0');
-const ICE = new THREE.Color('#9CCBEB'), COPPER = new THREE.Color('#E7A57E');
+// brand: cream (#F4ECE3), crimson (#D3243F), steel (#7E9BD0)
+const CREAM = new THREE.Color('#F4ECE3'), CRIMSON = new THREE.Color('#D3243F'), STEEL = new THREE.Color('#7E9BD0');
 const V = (x = 0, y = 0, z = 0) => new THREE.Vector3(x, y, z);
 const ease = (t: number) => (t <= 0 ? 0 : t >= 1 ? 1 : t * t * t * (t * (t * 6 - 15) + 10));
 const sstep = (a: number, b: number, x: number) => ease(clamp((x - a) / (b - a), 0, 1));
@@ -89,7 +89,7 @@ export function createLandingScene(canvas: HTMLCanvasElement, reduced: boolean):
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(30, 1, 0.004, 400);
   const SUN = V(-0.78, 0.48, 0.4).normalize();
-  const intro: Intro = reduced ? { ring: 1, globe: 1, orbits: 1, sats: 1, push: 1 } : { ring: 0, globe: 0, orbits: 0, sats: 0, push: 0 };
+  const intro: Intro = reduced ? { ring: 1, globe: 1, orbits: 1, sats: 1, push: 1, trail: 1 } : { ring: 0, globe: 0, orbits: 0, sats: 0, push: 0, trail: 0 };
   const time = { value: 0 };
 
   /* ---- environment for the spacecraft's metal foil ------------------------ */
@@ -122,7 +122,7 @@ export function createLandingScene(canvas: HTMLCanvasElement, reduced: boolean):
     uPlace: placeLocal, uPlaceOn: { value: 0 }, uHit: { value: V(0, 0, 0) }, uHitOn: { value: 0 },
   };
   const earth = new THREE.Mesh(new THREE.SphereGeometry(1, 192, 128), new THREE.ShaderMaterial({
-    uniforms: earthU,
+    uniforms: earthU, transparent: true, premultipliedAlpha: true,
     vertexShader: [
       'varying vec2 vUv; varying vec3 vN; varying vec3 vW; varying vec3 vL;',
       'void main(){ vUv = uv; vL = normalize(position); vN = normalize(mat3(modelMatrix) * normal);',
@@ -145,11 +145,11 @@ export function createLandingScene(canvas: HTMLCanvasElement, reduced: boolean):
       '  vec3 col = grade * (0.025 + 0.78 * day);',
       '  col = mix(col, vec3(0.70, 0.72, 0.76) * (0.02 + 0.5 * day), cl * 0.45);',
       '  vec3 hv = normalize(uSun + v);',
-      '  col += vec3(1.0, 0.84, 0.58) * pow(max(dot(n, hv), 0.0), 60.0) * ocean * day * 0.35;',
+      '  col += vec3(0.98, 0.95, 0.9) * pow(max(dot(n, hv), 0.0), 60.0) * ocean * day * 0.35;',
       '  float lights = texture2D(uNight, vUv).r;',
-      '  col += vec3(1.0, 0.76, 0.40) * pow(lights, 1.7) * (1.0 - smoothstep(-0.18, 0.08, ndl)) * (1.0 - cl) * 0.95;',
+      '  col += vec3(1.0, 0.86, 0.68) * pow(lights, 1.7) * (1.0 - smoothstep(-0.18, 0.08, ndl)) * (1.0 - cl) * 0.95;',
       '  float fres = pow(1.0 - max(dot(n, v), 0.0), 2.6);',
-      '  col += vec3(0.80, 0.68, 0.46) * fres * (0.04 + 0.22 * day);',
+      '  col += vec3(0.80, 0.82, 0.90) * fres * (0.04 + 0.22 * day);',
       // 12-day coverage: 173 tracks, each orbit shifted 12 stripes from the last
       '  float lat = asin(clamp(vL.y, -1.0, 1.0));',
       '  float L = mod(degrees(atan(vL.z, -vL.x)) + 180.0 + degrees(lat) * 0.22, 360.0);',
@@ -159,22 +159,23 @@ export function createLandingScene(canvas: HTMLCanvasElement, reduced: boolean):
       '  float rev = step(k + 0.5, uCover) * polar * uCoverOn;',
       '  float lead = smoothstep(uCover - 7.0, uCover - 0.5, k) * rev;',
       '  float landm = 1.0 - ocean;',
-      '  col = mix(col, col * 0.55 + vec3(0.86, 0.72, 0.46) * (0.05 + 0.22 * landm) * (0.35 + 0.65 * day), rev * 0.75);',
-      '  col += vec3(0.95, 0.82, 0.56) * (smoothstep(0.08, 0.0, min(within, 1.0 - within)) * 0.10 * rev + lead * 0.30);',
+      '  col = mix(col, col * 0.55 + vec3(0.96, 0.93, 0.89) * (0.05 + 0.2 * landm) * (0.35 + 0.65 * day), rev * 0.75);',
+      '  col += vec3(0.96, 0.93, 0.89) * smoothstep(0.08, 0.0, min(within, 1.0 - within)) * 0.10 * rev + vec3(0.83, 0.14, 0.25) * lead * 0.7;',
       // place marker: a fixed ring and a slow pulse
       '  float dp = distance(vL, uPlace);',
       '  float ring = smoothstep(0.0035, 0.0, abs(dp - 0.035)) + 0.6 * smoothstep(0.004, 0.0, abs(dp - 0.012));',
       '  float pr = fract(uTime * 0.35) * 0.16;',
       '  float pulse = smoothstep(0.006, 0.0, abs(dp - pr)) * (1.0 - pr / 0.16);',
-      '  col += vec3(0.96, 0.85, 0.60) * (ring + pulse * 0.8) * uPlaceOn;',
+      '  col += vec3(0.95, 0.2, 0.32) * (ring + pulse * 0.8) * uPlaceOn;',
       // radar footprint under NISAR
       '  float dh = distance(vW, uHit);',
       '  float fr = smoothstep(0.08, 0.0, abs(fract(dh * 60.0 - uTime * 0.6) - 0.5)) * exp(-dh * 30.0);',
-      '  col += vec3(0.62, 0.80, 0.92) * (fr * 0.35 + 0.25 * exp(-dh * 55.0)) * uHitOn;',
-      '  gl_FragColor = vec4(col * uGlobe, 1.0);',
+      '  col += vec3(0.95, 0.2, 0.32) * (fr * 0.4 + 0.3 * exp(-dh * 55.0)) * uHitOn;',
+      '  gl_FragColor = vec4(col * uGlobe, uGlobe);',
       '}',
     ].join('\n'),
   }));
+  earth.renderOrder = -1;            // first, so lines behind the planet are hidden by its depth
   globe.add(earth);
 
   /* ---- limb ring: a billboard drawn exactly on the silhouette -------------- */
@@ -195,7 +196,7 @@ export function createLandingScene(canvas: HTMLCanvasElement, reduced: boolean):
       '  vec2 d = normalize(p + 1e-5);',
       '  float side = 0.28 + 0.72 * pow(max(dot(d, normalize(vec2(0.62, 0.78))), 0.0), 1.4);',
       '  float i = (core * 1.6 + glow * 1.3) * side * drawn + head * (core * 2.5 + glow);',
-      '  gl_FragColor = vec4(vec3(0.95, 0.83, 0.58) * i * uOn, 1.0);',
+      '  gl_FragColor = vec4(vec3(0.96, 0.93, 0.89) * i * uOn, 1.0);',
       '}',
     ].join('\n'),
   }));
@@ -207,7 +208,7 @@ export function createLandingScene(canvas: HTMLCanvasElement, reduced: boolean):
   const orbs: Orb[] = [];
   const orbitGroup = new THREE.Group();
   scene.add(orbitGroup);
-  const orbitU = { uDraw: { value: 0 }, uAlpha: { value: 1 }, uColor: { value: GOLD } };
+  const orbitU = { uDraw: { value: 0 }, uAlpha: { value: 1 }, uColor: { value: CREAM } };
   {
     const r = rng(2026), NORB = 58, SEG = 220;
     const pos: number[] = [], au: number[] = [], seed: number[] = [];
@@ -260,7 +261,7 @@ export function createLandingScene(canvas: HTMLCanvasElement, reduced: boolean):
   const satPos = new Float32Array(NSAT * 3), satA = new Float32Array(NSAT), satC = new Float32Array(NSAT * 3), satS = new Float32Array(NSAT);
   orbs.forEach((o, i) => {
     for (let j = 0; j < TRAIL; j++) {
-      const k = i * TRAIL + j, c = o.ice ? ICE : GOLD_HI;
+      const k = i * TRAIL + j, c = o.ice ? STEEL : CREAM;
       satA[k] = j === 0 ? 1 : 0.55 * (1 - j / TRAIL);
       satS[k] = j === 0 ? 3.4 : 1.7;
       satC[k * 3] = c.r; satC[k * 3 + 1] = c.g; satC[k * 3 + 2] = c.b;
@@ -318,7 +319,7 @@ export function createLandingScene(canvas: HTMLCanvasElement, reduced: boolean):
     const l = new THREE.LineSegments(g, new THREE.ShaderMaterial({
       uniforms: nisarU, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
       vertexShader: 'attribute float aU; varying float vU; void main(){ vU = aU; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
-      fragmentShader: 'uniform float uAlpha, uDraw; varying float vU; void main(){ if (vU > uDraw) discard; gl_FragColor = vec4(vec3(0.96, 0.87, 0.66) * 0.55 * uAlpha, 1.0); }',
+      fragmentShader: 'uniform float uAlpha, uDraw; varying float vU; void main(){ if (vU > uDraw) discard; gl_FragColor = vec4(vec3(0.83, 0.14, 0.25) * 0.85 * uAlpha, 1.0); }',
     }));
     l.frustumCulled = false;
     scene.add(l);
@@ -326,12 +327,33 @@ export function createLandingScene(canvas: HTMLCanvasElement, reduced: boolean):
   const dotGeo = new THREE.BufferGeometry();
   dotGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(3), 3));
   dotGeo.setAttribute('aA', new THREE.BufferAttribute(new Float32Array([1]), 1));
-  dotGeo.setAttribute('aC', new THREE.BufferAttribute(new Float32Array([1, 0.93, 0.8]), 3));
-  dotGeo.setAttribute('aS', new THREE.BufferAttribute(new Float32Array([7]), 1));
+  dotGeo.setAttribute('aC', new THREE.BufferAttribute(new Float32Array([0.96, 0.93, 0.89]), 3));
+  dotGeo.setAttribute('aS', new THREE.BufferAttribute(new Float32Array([11]), 1));
   const dotU = { uAlpha: { value: 0 }, uDpr: satU.uDpr };
   const nisarDot = new THREE.Points(dotGeo, new THREE.ShaderMaterial({ uniforms: dotU, vertexShader: pointsVS, fragmentShader: pointsFS, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }));
   nisarDot.frustumCulled = false; nisarDot.renderOrder = 6;
   scene.add(nisarDot);
+
+  /* ---- the Petrova line: a crimson trail behind NISAR, widest at the spacecraft ---- */
+  const TR_N = 200, TR_ARC = 2.5;
+  const trPos = new Float32Array(TR_N * 6), trS = new Float32Array(TR_N * 2), trIdx: number[] = [];
+  for (let i = 0; i < TR_N; i++) {
+    trS[i * 2] = trS[i * 2 + 1] = i / (TR_N - 1);
+    if (i < TR_N - 1) { const q = i * 2; trIdx.push(q, q + 1, q + 2, q + 1, q + 3, q + 2); }
+  }
+  const trGeo = new THREE.BufferGeometry();
+  trGeo.setAttribute('position', new THREE.BufferAttribute(trPos, 3));
+  trGeo.setAttribute('aS', new THREE.BufferAttribute(trS, 1));
+  trGeo.setIndex(trIdx);
+  const trailU = { uDraw: { value: 0 }, uAlpha: { value: 0 } };
+  const trail = new THREE.Mesh(trGeo, new THREE.ShaderMaterial({
+    uniforms: trailU, transparent: true, depthWrite: false, side: THREE.DoubleSide,
+    vertexShader: 'attribute float aS; varying float vS; void main(){ vS = aS; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+    fragmentShader: 'uniform float uDraw, uAlpha; varying float vS; void main(){ if (vS > uDraw) discard; float a = (1.0 - smoothstep(0.7, 1.0, vS)) * uAlpha; gl_FragColor = vec4(0.827, 0.141, 0.247, a); }',
+  }));
+  trail.frustumCulled = false; trail.renderOrder = 5;
+  scene.add(trail);
+  const tp = V(), tv = V(), tc = V(), ts = V();
 
   /* ---- the spacecraft ------------------------------------------------------ */
   const CRAFT_S = 0.0045;
@@ -399,8 +421,8 @@ export function createLandingScene(canvas: HTMLCanvasElement, reduced: boolean):
     return m;
   }
   const LAMBDA_L = LM / 9;
-  craftInner.add(ribbon(ICE, LAMBDA_L, 1.15, 0.5));
-  craftInner.add(ribbon(COPPER, LAMBDA_L * (9.4 / 24), 0.62, 0.9));
+  craftInner.add(ribbon(CRIMSON, LAMBDA_L, 1.15, 0.5));
+  craftInner.add(ribbon(STEEL, LAMBDA_L * (9.4 / 24), 0.62, 0.9));
   const keyLight = new THREE.DirectionalLight(0xfff1dc, 3.0);
   keyLight.position.copy(SUN).multiplyScalar(10);
   const rim = new THREE.DirectionalLight(0x9cc0e0, 0.9); rim.position.set(6, -3, -8);
@@ -434,7 +456,7 @@ export function createLandingScene(canvas: HTMLCanvasElement, reduced: boolean):
       '  float l = 0.62 + 0.55 * max(dot(normalize(vNl), normalize(uLight)), 0.0);',
       '  col *= l;',
       '  float line = exp(-abs(vUv.x - uScan) * 260.0) * step(0.001, uScan) * step(uScan, 0.999);',
-      '  col += vec3(0.96, 0.85, 0.60) * line * 1.4;',
+      '  col = mix(col, vec3(0.83, 0.14, 0.25), clamp(line * 1.6, 0.0, 1.0));',
       '  float edge = min(min(vUv.x, 1.0 - vUv.x), min(vUv.y, 1.0 - vUv.y));',
       '  col *= 0.75 + 0.25 * smoothstep(0.0, 0.05, edge);',
       '  gl_FragColor = vec4(col, uOpacity);',
@@ -446,7 +468,7 @@ export function createLandingScene(canvas: HTMLCanvasElement, reduced: boolean):
   const base = new THREE.Mesh(new THREE.BoxGeometry(1.6, 1.0, 0.06), new THREE.MeshBasicMaterial({ color: 0x010204, transparent: true, toneMapped: false }));
   base.position.z = -0.032;
   slab.add(base);
-  const baseEdges = new THREE.LineSegments(new THREE.EdgesGeometry(base.geometry), new THREE.LineBasicMaterial({ color: GOLD, transparent: true, opacity: 0.7 }));
+  const baseEdges = new THREE.LineSegments(new THREE.EdgesGeometry(base.geometry), new THREE.LineBasicMaterial({ color: CREAM, transparent: true, opacity: 0.5 }));
   baseEdges.position.copy(base.position);
   slab.add(baseEdges);
   slab.visible = false;
@@ -476,8 +498,16 @@ export function createLandingScene(canvas: HTMLCanvasElement, reduced: boolean):
   SLIDES.forEach((s, i) => { if (s.place) placeQ.set(i, faceTo(latLon(s.place.lat, s.place.lon), V(0.32, 0.42, 1))); });
   const TILT = new THREE.Quaternion().setFromAxisAngle(V(0, 0, 1), -0.32);
   const spinQ = (a: number) => TILT.clone().multiply(new THREE.Quaternion().setFromAxisAngle(V(0, 1, 0), a));
-  const NU_HERO = 3.55, NU_CLOSE = 3.95;
+  const NU_HERO = 3.55, NU_CLOSE = 3.3;
   const fit = (g: number) => { const t = Math.tan((30 * Math.PI) / 360); return 1 / (t * g * Math.min(1, cssW / cssH)); };
+  // portrait framing in pixels: a globe of diameter D whose top sits at `top`
+  const TAN15 = Math.tan((30 * Math.PI) / 360);
+  const distFor = (D: number) => cssH / (TAN15 * D);
+  const nyFor = (D: number, top: number) => 1 - (2 * (top + D / 2)) / cssH;
+  const portraitGlobe = (wf: number, hf: number, topF: number) => {
+    const D = Math.min(wf * cssW, hf * cssH), top = Math.max(76, topF * cssH);
+    return { dist: distFor(D), ny: nyFor(D, top) };
+  };
   const portrait = () => cssW / cssH < 0.85;
   const craftPos = V(), hitPos = V(), craftFrame = new THREE.Matrix4();
   const inCraft = (x: number, y: number, z: number) => V(x, y, z).applyMatrix4(new THREE.Matrix4().extractRotation(craftFrame)).normalize();
@@ -485,8 +515,8 @@ export function createLandingScene(canvas: HTMLCanvasElement, reduced: boolean):
   function pose(i: number, u: number, t: number): Pose {
     const id = SLIDES[i].id, P = portrait(), spin = t * 0.025;
     const base: Pose = {
-      focus: V(), dir: V(0.08, 0.16, 1).normalize(), up: V(0, 1, 0), dist: fit(P ? 0.72 : 0.44), nx: P ? 0 : 0.16, ny: P ? 0.42 : 0.02, fov: 30,
-      q: spinQ(spin), orbits: 1, sats: 1, nisar: 1, craft: 0, ribbons: 0, hit: 0, coverOn: 0, cover: 0, nu: NU_HERO + t * 0.012, place: 0,
+      focus: V(), dir: V(0.08, 0.16, 1).normalize(), up: V(0, 1, 0), dist: P ? portraitGlobe(0.74, 0.42, 0.09).dist : fit(0.44), nx: P ? 0 : 0.16, ny: P ? portraitGlobe(0.74, 0.42, 0.09).ny : 0.02, fov: 30,
+      q: spinQ(spin), orbits: 1, sats: 1, nisar: 1, craft: 0, ribbons: 0, hit: 0, coverOn: 0, cover: 0, nu: NU_HERO - t * 0.008, place: 0,
     };
     switch (id) {
       case 'hero': return base;
@@ -499,14 +529,14 @@ export function createLandingScene(canvas: HTMLCanvasElement, reduced: boolean):
         return { ...base, focus: mid, up: craftPos.clone().normalize(), dir: inCraft(0.06, 0.1, 1), dist: P ? 0.74 : 0.58, nx: P ? 0 : 0.22, ny: P ? 0.1 : -0.1, orbits: 0.08, sats: 0.2, nisar: 0.3, craft: 1, ribbons: 0.12 + 0.88 * sstep(0, 0.55, u), hit: sstep(0.35, 0.7, u), nu: NU_CLOSE, q: spinQ(spin) };
       }
       case 'cover':
-        return { ...base, dir: V(0.12, 0.62, 1).normalize(), dist: fit(P ? 0.78 : 0.6), nx: P ? 0 : 0.2, ny: P ? 0.2 : 0, orbits: 0.25, sats: 0.5, nisar: 1, coverOn: 1, cover: coverCount(u), q: spinQ(spin + u * 2.4) };
+        return { ...base, dir: V(0.12, 0.62, 1).normalize(), dist: P ? portraitGlobe(0.84, 0.5, 0.1).dist : fit(0.6), nx: P ? 0 : 0.2, ny: P ? portraitGlobe(0.84, 0.5, 0.1).ny : 0, orbits: 0.25, sats: 0.5, nisar: 1, coverOn: 1, cover: coverCount(u), q: spinQ(spin + u * 2.4) };
       case 'outro':
-        return { ...base, dist: fit(P ? 0.6 : 0.36), nx: 0, ny: P ? 0.26 : 0.18 };
+        return { ...base, dist: P ? portraitGlobe(0.66, 0.38, 0.12).dist : fit(0.36), nx: 0, ny: P ? portraitGlobe(0.66, 0.38, 0.12).ny : 0.18 };
       default: {
         // place slides: the globe turns the place toward the viewer; the slab rises above it
         const q = placeQ.get(i)!;
         const pw = V(0.32, 0.42, 1).normalize();
-        return { ...base, focus: pw.clone(), dir: V(0.05, 0.3, 1).normalize(), dist: P ? 2.5 : 1.9, nx: P ? 0.1 : -0.06, ny: P ? -0.42 : -0.42, orbits: 0.1, sats: 0.25, nisar: 0, q, place: 1, nu: NU_HERO + t * 0.012 };
+        return { ...base, focus: pw.clone(), dir: V(0.05, 0.3, 1).normalize(), dist: P ? 2.5 : 1.9, nx: P ? 0.1 : -0.06, ny: P ? -0.42 : -0.42, orbits: 0.1, sats: 0.25, nisar: 0, q, place: 1, nu: NU_HERO - t * 0.008 };
       }
     }
   }
@@ -596,7 +626,25 @@ export function createLandingScene(canvas: HTMLCanvasElement, reduced: boolean):
     const dotP = craft.position;
     ((dotGeo.attributes.position as THREE.BufferAttribute).array as Float32Array).set([dotP.x, dotP.y, dotP.z]);
     (dotGeo.attributes.position as THREE.BufferAttribute).needsUpdate = true;
-    dotU.uAlpha.value = intro.sats * P.nisar * (1 - P.craft);
+    dotU.uAlpha.value = clamp(intro.trail * 2, 0, 1) * P.nisar * (1 - P.craft);
+
+    // the trail runs back along the orbit, over the planet's limb, and thins out
+    const trOn = P.nisar * (1 - P.craft) * (1 - P.place);
+    trail.visible = trOn > 0.01;
+    if (trail.visible) {
+      for (let i = 0; i < TR_N; i++) {
+        const sN = i / (TR_N - 1), nuS = nu + sN * TR_ARC;
+        nisarAt(nuS, tp); nisarVel(nuS, tv);
+        tc.copy(camPos).sub(tp).normalize();
+        ts.crossVectors(tv, tc).normalize();
+        const w = 0.004 + 0.019 * Math.pow(1 - sN, 1.5);
+        trPos[i * 6] = tp.x + ts.x * w; trPos[i * 6 + 1] = tp.y + ts.y * w; trPos[i * 6 + 2] = tp.z + ts.z * w;
+        trPos[i * 6 + 3] = tp.x - ts.x * w; trPos[i * 6 + 4] = tp.y - ts.y * w; trPos[i * 6 + 5] = tp.z - ts.z * w;
+      }
+      (trGeo.attributes.position as THREE.BufferAttribute).needsUpdate = true;
+      trailU.uDraw.value = ease(intro.trail);
+      trailU.uAlpha.value = trOn;
+    }
 
     // spacecraft
     craft.visible = P.craft > 0.01;
@@ -638,7 +686,7 @@ export function createLandingScene(canvas: HTMLCanvasElement, reduced: boolean):
       slab.scale.setScalar(lerp(0.03, scale, e));
       slabU.uOpacity.value = clamp(w * 3, 0, 1);
       (base.material as THREE.MeshBasicMaterial).opacity = clamp(w * 3, 0, 1);
-      (baseEdges.material as THREE.LineBasicMaterial).opacity = clamp(w * 3, 0, 1) * 0.7;
+      (baseEdges.material as THREE.LineBasicMaterial).opacity = clamp(w * 3, 0, 1) * 0.5;
       slabU.uScan.value = scan;
     }
     const pl2 = (film.k < 0.5 ? cur : nxt) ?? cur ?? nxt;

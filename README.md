@@ -1,10 +1,12 @@
-# TerraWaltz
+# Petrova Line
 
-**Dancing with the SARs** — an interactive experience inspired by the NASA–ISRO NISAR radar satellite, built for the NASA Space Apps Challenge.
+How NASA–ISRO's NISAR radar reads a moving planet: a 3D scroll story and a radar console, as an installable web app. Built for the NASA Space Apps Challenge 2026.
 
-The site has two parts: a scroll presentation that tells the mission in nine slides over one 3D stage, and a radar console where you work with four simulated scenes.
+> **The radar scenes and figures are simulated.** They are generated in the browser from a physical model set to NISAR's two bands; they are not mission data. The globe uses NASA Blue Marble and Black Marble imagery.
 
-> **All radar scenes and figures are simulated.** They are generated in the browser to illustrate the physics; they are not NISAR products. The globe uses NASA Blue Marble and Black Marble imagery.
+- Submission text for every form field: [SUBMISSION.md](SUBMISSION.md)
+- Demo deck, 7 slides: [submission/petrova-line-demo.pdf](submission/petrova-line-demo.pdf)
+- Offline copy: [release/petrova-line.html](release/petrova-line.html) (download and open)
 
 ## Run it
 
@@ -16,88 +18,68 @@ npm install
 npm run dev
 ```
 
-No server at hand: open `release/terrawaltz.html` directly. It is the whole app in one file.
-
 | Script | What it does |
 |---|---|
-| `npm run dev` | Vite dev server |
-| `npm run typecheck` | `tsc --noEmit` (strict) |
-| `npm run build` | typecheck + production build in `dist/` |
+| `npm run dev` | dev server |
+| `npm run build` | typecheck + installable app in `dist/` (manifest, icons, offline service worker) |
 | `npm run preview` | serve `dist/` |
-| `npm run build:single` | one-file build, copied to `release/terrawaltz.html` |
-| `npm run build:embed` | body-only fragment for sandboxed hosts (no download or print buttons) |
+| `npm run build:single` | one-file build, copied to `release/petrova-line.html` |
+| `npm run build:embed` | body-only fragment for sandboxed hosts |
+| `node tools/make-deck.mjs` | render the demo deck to PDF (needs Playwright) |
+| `node tools/make-icons.mjs` | rebuild the app icons from the logo geometry (needs Playwright) |
 
-## The presentation (`#story`)
+The workflow in `.github/workflows/pages.yml` publishes `dist/` to GitHub Pages on every push to `main` once Pages is set to *GitHub Actions* in the repository settings.
 
-One WebGL stage stays fixed while the page scrolls. Each slide holds for a while (its inner animation plays with the scroll), then the camera travels to the next one. Text builds in like a keynote slide when its slide takes the screen.
+## The app
 
-| # | Slide | On stage |
-|---|---|---|
-| 1 | Nothing on Earth stands still | Globe with a gold limb ring that draws itself, hairline orbits that draw on, moving satellites, NISAR labelled on its 747 km orbit |
-| 2 | 12 m | Camera flies to the procedural spacecraft |
-| 3 | 24 cm · 9.4 cm | L- and S-band waves grow from the reflector to the ground at their true wavelength ratio |
-| 4 | 12 days | Ground tracks fill the globe, 173 orbits in a 12-day cycle |
-| 5–8 | Water, Forest, Fault, Ice | The globe turns to the place; a terrain slab lifts off it and a scan line sweeps from the "before" to the "after" radar image |
-| 9 | Earth is always dancing | Back to the full constellation, with a way into the console |
+**Story** (`#story`). One WebGL stage; scrolling moves the camera between nine slides, and each slide builds in a few words.
 
-Keys: `↓` `↑` `PageDown` `PageUp` `Space` move between slides, `Home` / `End` jump to the ends. The dots on the right jump to a slide.
+1. The planet, the constellation and NISAR, with its orbit drawn as the crimson line of the logo
+2. The spacecraft and its 12 m reflector
+3. The two radar waves, L-band 24 cm and S-band 9.4 cm, at their true ratio
+4. The 12-day repeat cycle filling the globe
+5. to 8. Water, Forest, Fault, Ice: the globe turns to the place, a terrain tile rises from it and a scan line sweeps from the "before" to the "after" radar image
+9. The logo, and a way into the app
 
-With `prefers-reduced-motion`, smooth scrolling, the intro and the text builds are off, and camera moves become cuts.
+Keys: `↓` `↑` `Space` `PageDown` `PageUp` `Home` `End`.
 
-## The console (`#console`)
+**Console** (`#console`). A full-screen radar map.
 
-A full-viewport radar image with glass instruments over it.
+- Scenes: Water (Caspian Sea), Forest (Pantanal), Fault (Kahramanmaraş), Ice (Jakobshavn)
+- Before/after divider (drag, or arrow keys)
+- Channels HH, HV, VV, InSAR, false colour; L or S band; optical view with clouds, change map, channel cycling and place names under `⋯`
+- Pixel panel: what the echo is made of (surface, volume, double bounce) and what-if sliders for roughness and moisture; selecting a mechanism highlights it on the map
+- Timeline 2020–2026 with the scene's headline metric; play, scrub, set the baseline date
+- Export a brief as Markdown, JSON or text; print it
 
-| Case | What the radar shows |
-|---|---|
-| Caspian Sea · Aktau & Lake Karakol | shoreline retreat, wetland loss, port settlement |
-| Pantanal wetlands | flood pulse under the canopy, clearing |
-| Kahramanmaraş fault | co-seismic fringes, damage, a subsiding basin |
-| Jakobshavn glacier | calving-front retreat, melt, ice motion |
+Keys: `Space` play · `←` `→` one month · `1`–`4` scene.
 
-- **Case switcher** (top): live thumbnails and a headline metric.
-- **Before / after divider**: drag the handle, or focus it and use the arrow keys.
-- **Channel dock**: HH, HV, VV, InSAR phase and false-colour RGB; **Sweep** cycles them. Also Optical / SAR, L or S band, change mask, clouds.
-- **Probe**: hover a pixel for coordinates, surface class and σ⁰; click to pin it in the decoder.
-- **Physics Decoder**: surface, volume and double-bounce scattering; selecting one highlights where it dominates. What-if sliders for roughness and dielectric constant.
-- **Timeline**: 2020–2026, draggable playhead, play / pause, *Set A here*.
-- **Export Mission Brief**: Markdown, JSON or plain text; download, copy or print.
-
-Keys: `Space` play · `←` `→` one month · `1`–`4` switch case.
+**Devices.** Phones (portrait and landscape), tablets, desktops and wide screens. Installable (Add to Home Screen, or the install button in Chromium browsers); works offline after the first visit. Reduced motion turns off smooth scrolling, the launch animation and text builds, and turns camera moves into cuts.
 
 ## How it works
 
 ```
 src/
-  App.tsx, index.css            story / console routing, tokens, glass and landing styles
-  landing/
-    film.ts                     slides, scroll map (hold + travel), shared curves
-    Landing.tsx                 scroll container (Lenis), keynote builds (GSAP), chrome
-    slab.worker.ts, slabData.ts renders the slab images off the main thread
-  three/
-    landingScene.ts             globe, orbits, satellites, NISAR, waves, coverage, slab, camera rig
-    SatelliteModel.ts           procedural NISAR spacecraft
-  engine/                       backscatter physics, four procedural scenes, renderers, map engine
-  components/console/           the console
-  state/mission.ts              one zustand store
-  assets/earth/                 Blue Marble (day) and Black Marble (night lights) textures
-tools/make-embed.mjs            post-processing for the one-file builds
-release/terrawaltz.html         committed one-file build
+  brand/                 logo mark (drawn in code from the logo artwork) and launch screen
+  landing/               the story: slides and scroll map, text builds, slab renderer in a worker
+  three/landingScene.ts  globe, orbits, NISAR and its trail, spacecraft, waves, coverage, terrain tiles
+  three/SatelliteModel.ts  procedural NISAR spacecraft
+  components/console/    the radar console
+  engine/                backscatter physics, four procedural scenes, renderers, map engine, brief export
+  state/mission.ts       one store for every control
+public/                  manifest, icons, service worker
+submission/              demo deck (HTML source, screens, PDF)
 ```
 
-Each simulated scene maps a date to a per-pixel state (roughness, dielectric constant, vegetation volume, vertical structure, coherence, line-of-sight displacement). One backscatter function turns that state into HH, HV and VV, and the same function drives the decoder. The slabs on the landing use the same renderer, so they match the console.
+Each scene maps a date to a per-pixel state (roughness, dielectric constant, vegetation volume, vertical structure, coherence, line-of-sight motion). One backscatter function turns it into HH, HV and VV; the same function drives the pixel panel. Interferograms wrap `2 × displacement / wavelength`: one fringe is 11.9 cm at L-band and 4.7 cm at S-band.
 
-Stack: React 18, Vite, TypeScript (strict), Tailwind, Three.js, GSAP, Lenis, Motion, zustand, lucide-react.
+## Use of AI
 
-## Known limits
+Most of the code was written with an AI coding assistant (Claude Code, Anthropic) from the team's concept and design direction. The radar scenes are synthetic and labelled "Simulated" wherever they appear. See [SUBMISSION.md](SUBMISSION.md#use-of-artificial-intelligence).
 
-- **Simulated scenes.** Nothing in the console or on the slabs is a mission product.
-- **Schematic orbits.** The constellation is decorative; NISAR's own orbit uses its real altitude and inclination.
-- **Edge refraction is Chromium-only** in the console glass; other browsers get blur, rim light and sheen.
-- **Timeline.** NISAR launched on 30 July 2025. Earlier years are shown as an L-band analogue so each case has a baseline.
+## Data and credits
 
-## Credits and licences
-
-- Earth imagery: NASA Visible Earth, Blue Marble and Black Marble (public domain), taken from the examples of the `three-globe` package and downscaled.
-- Inter Tight and JetBrains Mono, bundled from `@fontsource` under the SIL Open Font License.
-- Three.js, React, GSAP, Lenis, Motion, zustand and lucide are MIT / ISC or the GSAP standard licence.
+- NISAR mission facts: [NASA/JPL](https://nisar.jpl.nasa.gov/nisarmission)
+- Earth imagery: NASA [Blue Marble](https://visibleearth.nasa.gov/collection/1484/blue-marble) and [Black Marble](https://earthobservatory.nasa.gov/features/NightLights), downscaled from the examples of [three-globe](https://github.com/vasturiano/three-globe)
+- Fonts: Archivo and JetBrains Mono (SIL Open Font License), via Fontsource
+- Libraries: React, Vite, TypeScript, Tailwind CSS, Three.js, GSAP, Lenis, Motion, zustand, lucide-react

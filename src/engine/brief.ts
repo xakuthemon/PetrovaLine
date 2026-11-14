@@ -1,5 +1,5 @@
 /*
- * TerraWaltz — mission brief builder (Markdown, JSON, plain text).
+ * Petrova Line — mission brief builder (Markdown, JSON, plain text).
  */
 import { monthLabel } from './util';
 import { BANDS, type BandId } from './physics';
@@ -31,7 +31,7 @@ export interface BriefInput {
 const CAVEAT = 'Figures come from a procedurally simulated demonstration scenario, not from NISAR measurements. Replace them with mission products before any decision.';
 
 export function briefFilename(i: BriefInput, f: BriefFormat): string {
-  return 'terrawaltz-brief-' + i.def.id + '-' + monthLabel(Math.floor(i.m + 1e-6)).toLowerCase().replace(' ', '-') + '.' + f;
+  return 'petrova-line-brief-' + i.def.id + '-' + monthLabel(Math.floor(i.m + 1e-6)).toLowerCase().replace(' ', '-') + '.' + f;
 }
 
 function model(i: BriefInput) {
@@ -57,7 +57,7 @@ function model(i: BriefInput) {
     impacts: s.impacts ? d.impacts.map((x) => ({ impact: x.t, detail: x.d })) : undefined,
     actions: s.actions ? d.brief.actions : undefined,
     monitoring: s.monitor ? d.brief.monitor : undefined,
-    source: 'TerraWaltz simulated NISAR-like scenario',
+    source: 'Petrova Line simulated NISAR-like scenario',
     caveat: CAVEAT,
   };
 }

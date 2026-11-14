@@ -30,10 +30,10 @@ export const SLIDES: Slide[] = [
   { id: 'craft', name: 'The spacecraft', hold: 0.9 },
   { id: 'waves', name: 'Two wavelengths', hold: 0.9 },
   { id: 'cover', name: 'Twelve days', hold: 1.3 },
-  { id: 'water', name: 'Water', hold: 1.3, place: { scene: 'caspian', lat: 43.6, lon: 51.2, coords: '43.6° N · 51.2° E', where: 'Aktau, Caspian Sea', a: 0, b: 80, caption: 'of new land as the sea pulls back' } },
-  { id: 'forest', name: 'Forest', hold: 1.3, place: { scene: 'pantanal', lat: -17.8, lon: -57.5, coords: '17.8° S · 57.5° W', where: 'Pantanal, Brazil', a: 33, b: 40, caption: 'of forest standing in floodwater' } },
-  { id: 'fault', name: 'Fault', hold: 1.3, place: { scene: 'fault', lat: 37.6, lon: 36.9, coords: '37.6° N · 36.9° E', where: 'Kahramanmaraş, Türkiye', a: 36, b: 38, insar: true, caption: 'of ground motion in the basin' } },
-  { id: 'ice', name: 'Ice', hold: 1.3, place: { scene: 'glacier', lat: 69.2, lon: -49.8, coords: '69.2° N · 49.8° W', where: 'Jakobshavn, Greenland', a: 6, b: 78, caption: 'of ice surface lost at the front' } },
+  { id: 'water', name: 'Water', hold: 1.3, place: { scene: 'caspian', lat: 43.6, lon: 51.2, coords: '43.6° N · 51.2° E', where: 'Aktau, Caspian Sea', a: 0, b: 80, caption: 'new land' } },
+  { id: 'forest', name: 'Forest', hold: 1.3, place: { scene: 'pantanal', lat: -17.8, lon: -57.5, coords: '17.8° S · 57.5° W', where: 'Pantanal, Brazil', a: 33, b: 40, caption: 'flooded' } },
+  { id: 'fault', name: 'Fault', hold: 1.3, place: { scene: 'fault', lat: 37.6, lon: 36.9, coords: '37.6° N · 36.9° E', where: 'Kahramanmaraş, Türkiye', a: 36, b: 38, insar: true, caption: 'ground motion' } },
+  { id: 'ice', name: 'Ice', hold: 1.3, place: { scene: 'glacier', lat: 69.2, lon: -49.8, coords: '69.2° N · 49.8° W', where: 'Jakobshavn, Greenland', a: 6, b: 78, caption: 'ice surface lost' } },
   { id: 'outro', name: 'Earth in motion', hold: 0.6 },
 ];
 

@@ -1,5 +1,5 @@
 /*
- * TerraWaltz — comparison-viewport engine.
+ * Petrova Line — comparison-viewport engine.
  * Renders date A and date B of a scene into off-screen canvases and composites
  * them with a divider, pan / zoom, a graticule and place markers. The glass UI
  * around it is React; this class only owns pixels and pointer maths.
@@ -56,7 +56,7 @@ export interface MapHooks {
   onView?(kmPerPx: number, zoom: number): void;
 }
 
-const FONT = '500 10px "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, monospace';
+const FONT = '500 12px Archivo, system-ui, sans-serif';
 
 export class MapEngine {
   private ctx: CanvasRenderingContext2D;
@@ -304,16 +304,16 @@ export class MapEngine {
       if (!a) continue;
       const x = Math.round(a[0] * W * view.s + view.ox), y = Math.round(a[1] * H * view.s + view.oy);
       if (x < 10 || y < 10 || x > cssW - 10 || y > cssH - 10) continue;
-      ctx.fillStyle = 'rgba(7,11,16,0.9)';
-      ctx.strokeStyle = '#F2EEE6';
+      ctx.fillStyle = 'rgba(23,24,36,0.9)';
+      ctx.strokeStyle = '#F4ECE3';
       ctx.lineWidth = 1;
       ctx.beginPath(); ctx.arc(x, y, 3.5, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-      const label = p.label.toUpperCase(), w = ctx.measureText(label).width;
+      const label = p.label, w = ctx.measureText(label).width;
       const left = x + 12 + w > cssW - 8;
       const tx = left ? x - 10 - w : x + 10;
-      ctx.fillStyle = 'rgba(7,11,16,0.62)';
-      ctx.fillRect(tx - 4, y - 8, w + 8, 16);
-      ctx.fillStyle = 'rgba(242,238,230,0.92)';
+      ctx.fillStyle = 'rgba(23,24,36,0.72)';
+      ctx.fillRect(tx - 5, y - 9, w + 10, 18);
+      ctx.fillStyle = 'rgba(244,236,227,0.95)';
       ctx.fillText(label, tx, y + 0.5);
     }
   }
