@@ -9,13 +9,11 @@ import type { Channel, MapStats, ProbeInfo, Sensor } from '../engine/mapEngine';
 import type { Mechanism } from '../engine/render';
 import { caseById } from '../data/cases';
 
-export type Mode = 'orbit' | 'console' | 'signal';
-export const MODES: Mode[] = ['orbit', 'console', 'signal'];
+export type Mode = 'story' | 'console';
+export const MODES: Mode[] = ['story', 'console'];
 
 export interface MissionState {
   mode: Mode;
-  /** camera dive from Orbit into Console in progress */
-  diving: boolean;
   caseId: SceneId;
   /** bumps on every case change: drives the retarget lock-on animation */
   retarget: number;
@@ -40,8 +38,6 @@ export interface MissionState {
   stats: MapStats;
 
   setMode(mode: Mode): void;
-  enterConsole(dive?: boolean): void;
-  finishDive(): void;
   setCase(id: SceneId): void;
   setM(m: number): void;
   setA(a: number): void;
@@ -63,9 +59,9 @@ export interface MissionState {
 function readHash(): Mode {
   try {
     const h = window.location.hash.replace('#', '');
-    if (h === 'console' || h === 'signal' || h === 'orbit') return h;
+    if (h === 'console') return 'console';
   } catch { /* hash unavailable */ }
-  return 'orbit';
+  return 'story';
 }
 function writeHash(mode: Mode): void {
   try {
@@ -77,7 +73,6 @@ const first = caseById('caspian');
 
 export const useMission = create<MissionState>((set, get) => ({
   mode: readHash(),
-  diving: false,
   caseId: 'caspian',
   retarget: 0,
   a: first.defaults.a,
@@ -100,14 +95,9 @@ export const useMission = create<MissionState>((set, get) => ({
 
   setMode(mode) {
     if (mode !== 'console') set({ playing: false, sweep: false });
-    set({ mode, diving: false });
+    set({ mode });
     writeHash(mode);
   },
-  enterConsole(dive) {
-    if (dive && get().mode === 'orbit') set({ diving: true });
-    else get().setMode('console');
-  },
-  finishDive() { get().setMode('console'); },
   setCase(id) {
     const d = caseById(id).defaults;
     set((s) => ({

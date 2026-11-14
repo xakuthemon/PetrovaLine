@@ -87,7 +87,7 @@ export function ExportBriefModal({ series }: { series: Series | null }) {
       <AnimatePresence>
         {open && (
           <motion.div key="export" className="fixed inset-0 z-50 grid place-items-center overflow-y-auto p-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}
-            style={{ background: 'rgba(4,6,10,0.55)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}
+            style={{ background: 'rgba(7,11,16,0.55)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}
             onPointerDown={(e) => { if (e.target === e.currentTarget) setOpen(false); }}>
             <motion.div initial={{ opacity: 0, scale: 0.94, y: 18 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.96, y: 10 }} transition={SOFT_SPRING} className="w-full max-w-[940px]">
               <LiquidGlassPanel ref={card} depth="deep" radius={30} role="dialog" aria-modal="true" aria-labelledby="export-title" tabIndex={-1} className="outline-none"
@@ -122,7 +122,7 @@ export function ExportBriefModal({ series }: { series: Series | null }) {
                         const on = sections[s.id];
                         return (
                           <button key={s.id} type="button" role="checkbox" aria-checked={on} onClick={() => setSections((p) => ({ ...p, [s.id]: !p[s.id] }))}
-                            className={'flex items-center gap-2.5 rounded-2xl px-3 py-2 text-left text-[12.5px] transition-colors ' + (on ? 'bg-lens/10 text-lens shadow-[inset_0_0_0_1px_rgba(244,251,255,0.28)]' : 'bg-black/25 text-slate shadow-[inset_0_0_0_1px_rgba(244,251,255,0.08)] hover:text-lens')}>
+                            className={'flex items-center gap-2.5 rounded-2xl px-3 py-2 text-left text-[12.5px] transition-colors ' + (on ? 'bg-lens/10 text-lens shadow-[inset_0_0_0_1px_rgba(242,238,230,0.28)]' : 'bg-black/25 text-slate shadow-[inset_0_0_0_1px_rgba(242,238,230,0.08)] hover:text-lens')}>
                             <span className={'grid h-4 w-4 flex-none place-items-center rounded-full ' + (on ? 'bg-lband text-void' : 'bg-lens/10')}>{on && <Check size={11} strokeWidth={3} />}</span>
                             {s.label}
                           </button>
@@ -134,7 +134,7 @@ export function ExportBriefModal({ series }: { series: Series | null }) {
                   <div>
                     <label htmlFor="brief-analyst" className="tele mb-2 block text-[8.5px] text-slate">Prepared by (optional)</label>
                     <input id="brief-analyst" value={analyst} onChange={(e) => setAnalyst(e.target.value)} placeholder="Name or team" maxLength={80}
-                      className="h-10 w-full rounded-full bg-black/30 px-4 text-[13px] text-lens placeholder:text-slate/70 shadow-[inset_0_1px_2px_rgba(0,0,0,0.6),inset_0_0_0_1px_rgba(244,251,255,0.1)] outline-none focus:shadow-[inset_0_1px_2px_rgba(0,0,0,0.6),inset_0_0_0_1px_rgba(0,240,255,0.7)]" />
+                      className="h-10 w-full rounded-full bg-black/30 px-4 text-[13px] text-lens placeholder:text-slate/70 shadow-[inset_0_1px_2px_rgba(0,0,0,0.6),inset_0_0_0_1px_rgba(242,238,230,0.1)] outline-none focus:shadow-[inset_0_1px_2px_rgba(0,0,0,0.6),inset_0_0_0_1px_rgba(156,203,235,0.7)]" />
                   </div>
 
                   <div className="mt-auto flex flex-wrap items-center gap-2.5">
@@ -151,7 +151,7 @@ export function ExportBriefModal({ series }: { series: Series | null }) {
                     <span className="truncate font-mono text-[10px] text-slate">{filename}</span>
                   </div>
                   <textarea ref={pre} readOnly value={text} aria-label="Brief preview" spellCheck={false}
-                    className="scroll-thin h-[300px] w-full flex-1 resize-none rounded-[20px] bg-black/40 p-4 font-mono text-[11px] leading-relaxed text-lens/90 shadow-[inset_0_1px_3px_rgba(0,0,0,0.7),inset_0_0_0_1px_rgba(244,251,255,0.08)] outline-none md:h-auto md:min-h-[420px]" />
+                    className="scroll-thin h-[300px] w-full flex-1 resize-none rounded-[20px] bg-black/40 p-4 font-mono text-[11px] leading-relaxed text-lens/90 shadow-[inset_0_1px_3px_rgba(0,0,0,0.7),inset_0_0_0_1px_rgba(242,238,230,0.08)] outline-none md:h-auto md:min-h-[420px]" />
                   <p className="mt-2 text-[11px] leading-snug text-kapton/90">Figures come from a simulated demonstration scenario, not from NISAR measurements.</p>
                 </div>
               </LiquidGlassPanel>

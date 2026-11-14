@@ -1,7 +1,7 @@
 /* Animated vector diagram of one scattering mechanism. */
 import type { Mechanism } from '../../engine/render';
 
-const IN = '#00F0FF', OUT = '#F5B041', INK = '#F4FBFF';
+const IN = '#9CCBEB', OUT = '#E4C68F', INK = '#F2EEE6';
 
 export function ScatterDiagram({ kind, active }: { kind: Mechanism; active: boolean }) {
   const run = { strokeDasharray: '5 5', animation: active ? 'dash-run 1.3s linear infinite' : 'none' } as const;

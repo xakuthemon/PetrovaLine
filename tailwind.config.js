@@ -4,18 +4,18 @@ export default {
   theme: {
     extend: {
       colors: {
-        void: '#04060A',
-        umbra: '#080C12',
-        kapton: '#F5B041',
-        lband: '#00F0FF',
-        sband: '#FF2A85',
-        lens: '#F4FBFF',
-        slate: '#7C8D9E',
+        void: '#070B10',
+        umbra: '#0C131B',
+        kapton: '#E4C68F',
+        lband: '#9CCBEB',
+        sband: '#E7A57E',
+        lens: '#F2EEE6',
+        slate: '#8592A0',
       },
       fontFamily: {
-        sans: ['"Inter Variable"', 'Inter', 'system-ui', '-apple-system', 'Helvetica Neue', 'Arial', 'sans-serif'],
+        sans: ['"Inter Tight Variable"', '"Inter Tight"', 'Inter', 'system-ui', '-apple-system', 'Helvetica Neue', 'Arial', 'sans-serif'],
         mono: ['"JetBrains Mono Variable"', '"JetBrains Mono"', 'ui-monospace', 'SF Mono', 'Menlo', 'Consolas', 'monospace'],
-        serif: ['"Instrument Serif"', 'Iowan Old Style', 'Palatino Linotype', 'Georgia', 'serif'],
+        
       },
       letterSpacing: {
         monument: '0.34em',

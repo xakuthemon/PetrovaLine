@@ -52,7 +52,7 @@ export function MagneticButton({ children, onClick, tint = 'lens', primary = fal
       {primary && <span className="absolute inset-0 z-0 rounded-full" style={{ background: 'radial-gradient(120% 160% at 20% 0%, rgba(var(--tint),0.34), rgba(var(--tint),0.06) 60%)' }} />}
       {ripples.map((r) => (
         <span key={r.id} className="pointer-events-none absolute z-[1] h-[260px] w-[260px] rounded-full"
-          style={{ left: r.x, top: r.y, background: 'radial-gradient(circle, rgba(244,251,255,0.5), rgba(244,251,255,0) 62%)', animation: 'ripple 700ms ease-out forwards' }} />
+          style={{ left: r.x, top: r.y, background: 'radial-gradient(circle, rgba(242,238,230,0.5), rgba(242,238,230,0) 62%)', animation: 'ripple 700ms ease-out forwards' }} />
       ))}
       <span className="lg-body flex items-center gap-2.5">{children}</span>
     </motion.button>

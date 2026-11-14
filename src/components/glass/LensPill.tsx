@@ -9,10 +9,10 @@ export const SPRING = { type: 'spring', stiffness: 420, damping: 30, mass: 0.9 }
 export const SOFT_SPRING = { type: 'spring', stiffness: 260, damping: 28, mass: 1 } as const;
 
 export const TINTS = {
-  lens: '244, 251, 255',
-  lband: '0, 240, 255',
-  sband: '255, 42, 133',
-  kapton: '245, 176, 65',
+  lens: '242, 238, 230',
+  lband: '156, 203, 235',
+  sband: '231, 165, 126',
+  kapton: '228, 198, 143',
 } as const;
 export type Tint = keyof typeof TINTS;
 

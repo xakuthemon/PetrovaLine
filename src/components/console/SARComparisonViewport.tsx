@@ -98,7 +98,7 @@ function Legend() {
   return (
     <div>
       <div className="tele text-[8.5px] text-slate">σ⁰ {channel} · {BANDS[band].name}</div>
-      <div className="mt-1.5 h-1.5 rounded-full" style={{ background: 'linear-gradient(90deg,#000,#f4fbff)' }} />
+      <div className="mt-1.5 h-1.5 rounded-full" style={{ background: 'linear-gradient(90deg,#000,#F2EEE6)' }} />
       <div className="mt-1 flex justify-between font-mono text-[9px] text-slate"><span>{pd.lo} dB</span><span>{pd.hi} dB</span></div>
     </div>
   );
@@ -188,7 +188,7 @@ export function SARComparisonViewport({ ready }: { ready: boolean }) {
         <span className="absolute inset-0 rounded-full border border-lband/70" style={{ animation: 'lock-ring 1100ms cubic-bezier(.2,.7,.2,1) forwards' }} />
         <span className="absolute inset-[60px] rounded-full border border-lens/60" style={{ animation: 'lock-ring 1100ms 140ms cubic-bezier(.2,.7,.2,1) forwards', opacity: 0 }} />
         <svg viewBox="0 0 100 100" className="absolute inset-0" style={{ animation: 'sweep-arc 1200ms cubic-bezier(.3,.6,.2,1) forwards', opacity: 0 }}>
-          <path d="M50 4 A46 46 0 0 1 96 50" fill="none" stroke="#F5B041" strokeWidth="0.8" strokeLinecap="round" />
+          <path d="M50 4 A46 46 0 0 1 96 50" fill="none" stroke="#E4C68F" strokeWidth="0.8" strokeLinecap="round" />
         </svg>
       </div>
 
@@ -246,16 +246,16 @@ export function SARComparisonViewport({ ready }: { ready: boolean }) {
               <div className="mt-1 font-mono text-[9.5px] text-lens">{L < 1 ? L * 1000 + ' m' : L + ' km'}</div>
             </div>
             <svg viewBox="0 0 32 32" className="h-8 w-8 flex-none" role="img" aria-label="North is up">
-              <circle cx="16" cy="16" r="13.5" fill="none" stroke="#F4FBFF" strokeOpacity="0.3" />
-              <path d="M16 4 L19.5 16 L16 14 L12.5 16 Z" fill="#00F0FF" />
-              <path d="M16 28 L19.5 16 L16 18 L12.5 16 Z" fill="#F4FBFF" fillOpacity="0.35" />
-              <text x="16" y="3.4" textAnchor="middle" fontSize="5" fill="#F4FBFF" fontFamily="'JetBrains Mono Variable', monospace">N</text>
+              <circle cx="16" cy="16" r="13.5" fill="none" stroke="#F2EEE6" strokeOpacity="0.3" />
+              <path d="M16 4 L19.5 16 L16 14 L12.5 16 Z" fill="#9CCBEB" />
+              <path d="M16 28 L19.5 16 L16 18 L12.5 16 Z" fill="#F2EEE6" fillOpacity="0.35" />
+              <text x="16" y="3.4" textAnchor="middle" fontSize="5" fill="#F2EEE6" fontFamily="'JetBrains Mono Variable', monospace">N</text>
             </svg>
           </div>
           <div className="flex items-center gap-3">
             <svg viewBox="0 0 44 26" className="h-[26px] w-11 flex-none" aria-hidden="true">
-              <path d="M4 22 A18 18 0 0 1 40 22" fill="none" stroke="#F4FBFF" strokeOpacity="0.18" strokeWidth="3" strokeLinecap="round" />
-              <path d="M4 22 A18 18 0 0 1 40 22" fill="none" stroke={insar ? '#FF2A85' : '#00F0FF'} strokeWidth="3" strokeLinecap="round" pathLength={100} strokeDasharray={`${clamp(meanCoh, 0, 1) * 100} 100`} />
+              <path d="M4 22 A18 18 0 0 1 40 22" fill="none" stroke="#F2EEE6" strokeOpacity="0.18" strokeWidth="3" strokeLinecap="round" />
+              <path d="M4 22 A18 18 0 0 1 40 22" fill="none" stroke={insar ? '#E7A57E' : '#9CCBEB'} strokeWidth="3" strokeLinecap="round" pathLength={100} strokeDasharray={`${clamp(meanCoh, 0, 1) * 100} 100`} />
             </svg>
             <div className="leading-none">
               <div className="tele text-[8px] text-slate">Coherence A→B</div>

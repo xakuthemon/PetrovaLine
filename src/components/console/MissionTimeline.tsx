@@ -11,7 +11,7 @@ import type { Series } from '../../engine/scenes';
 import { caseById, valuesAt, type Tone } from '../../data/cases';
 import { useMission } from '../../state/mission';
 
-const HEX: Record<Tone, string> = { lband: '#00F0FF', sband: '#FF2A85', kapton: '#F5B041' };
+const HEX: Record<Tone, string> = { lband: '#9CCBEB', sband: '#E7A57E', kapton: '#E4C68F' };
 const H = 78, PAD = { l: 10, r: 10, t: 8, b: 17 };
 
 export function MissionTimeline({ series }: { series: Series | null }) {
@@ -63,7 +63,7 @@ export function MissionTimeline({ series }: { series: Series | null }) {
         <div className="flex flex-none flex-col items-center gap-1.5">
           <button type="button" onClick={() => setPlaying(!playing)} aria-label={playing ? 'Pause the timeline' : 'Play the timeline'} aria-pressed={playing}
             className="relative grid h-11 w-11 place-items-center rounded-full text-lens transition-transform active:scale-95"
-            style={{ background: 'radial-gradient(120% 140% at 30% 0%, rgba(0,240,255,0.45), rgba(0,240,255,0.10) 60%)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.65), inset 0 -6px 12px -6px rgba(0,240,255,0.55), 0 0 0 0.5px rgba(0,240,255,0.5), 0 8px 20px -10px rgba(0,240,255,0.8)' }}>
+            style={{ background: 'radial-gradient(120% 140% at 30% 0%, rgba(156,203,235,0.45), rgba(156,203,235,0.10) 60%)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.65), inset 0 -6px 12px -6px rgba(156,203,235,0.55), 0 0 0 0.5px rgba(156,203,235,0.5), 0 8px 20px -10px rgba(156,203,235,0.8)' }}>
             {playing ? <Pause size={17} strokeWidth={2} /> : <Play size={17} strokeWidth={2} className="translate-x-px" />}
           </button>
           <button type="button" onClick={() => setSpeed(speed === 1 ? 2 : speed === 2 ? 0.5 : 1)} aria-label={'Playback speed ' + speed + '×. Change speed'}
@@ -85,18 +85,18 @@ export function MissionTimeline({ series }: { series: Series | null }) {
             </defs>
             {Array.from({ length: 7 }, (_, y) => (
               <g key={y}>
-                <line x1={xOf(y * 12)} x2={xOf(y * 12)} y1={PAD.t} y2={H - PAD.b} stroke="#F4FBFF" strokeOpacity="0.09" />
-                {(w >= 300 || y % 2 === 0) && <text x={xOf(y * 12)} y={H - 4} textAnchor={y === 0 ? 'start' : 'middle'} fontSize="9" fill="#7C8D9E" fontFamily="'JetBrains Mono Variable', monospace">{w >= 300 ? 2020 + y : "'" + (20 + y)}</text>}
+                <line x1={xOf(y * 12)} x2={xOf(y * 12)} y1={PAD.t} y2={H - PAD.b} stroke="#F2EEE6" strokeOpacity="0.09" />
+                {(w >= 300 || y % 2 === 0) && <text x={xOf(y * 12)} y={H - 4} textAnchor={y === 0 ? 'start' : 'middle'} fontSize="9" fill="#8592A0" fontFamily="'JetBrains Mono Variable', monospace">{w >= 300 ? 2020 + y : "'" + (20 + y)}</text>}
               </g>
             ))}
             {paths.map((p) => <path key={'a' + p.tr.key} d={p.area} fill={'url(#tl-' + p.tr.key + ')'} />)}
             {paths.map((p) => <path key={p.tr.key} d={p.d} fill="none" stroke={HEX[p.tr.tone]} strokeWidth="1.6" strokeLinejoin="round" strokeLinecap="round" style={{ filter: 'drop-shadow(0 0 4px ' + HEX[p.tr.tone] + '88)' }} />)}
-            {values && paths.map((p) => <circle key={'d' + p.tr.key} cx={xOf(m)} cy={p.yOf(values[p.tr.key])} r="3.2" fill={HEX[p.tr.tone]} stroke="#04060A" strokeWidth="1.5" />)}
+            {values && paths.map((p) => <circle key={'d' + p.tr.key} cx={xOf(m)} cy={p.yOf(values[p.tr.key])} r="3.2" fill={HEX[p.tr.tone]} stroke="#070B10" strokeWidth="1.5" />)}
             {/* baseline flag */}
             <g transform={`translate(${xOf(a)},0)`}>
-              <line y1={PAD.t - 4} y2={H - PAD.b} stroke="#F4FBFF" strokeOpacity="0.55" strokeDasharray="2 3" />
-              <rect x="-6.5" y={PAD.t - 8} width="13" height="12" rx="3" fill="#F4FBFF" fillOpacity="0.9" />
-              <text y={PAD.t + 1} textAnchor="middle" fontSize="8.5" fontWeight="700" fill="#04060A" fontFamily="'JetBrains Mono Variable', monospace">A</text>
+              <line y1={PAD.t - 4} y2={H - PAD.b} stroke="#F2EEE6" strokeOpacity="0.55" strokeDasharray="2 3" />
+              <rect x="-6.5" y={PAD.t - 8} width="13" height="12" rx="3" fill="#F2EEE6" fillOpacity="0.9" />
+              <text y={PAD.t + 1} textAnchor="middle" fontSize="8.5" fontWeight="700" fill="#070B10" fontFamily="'JetBrains Mono Variable', monospace">A</text>
             </g>
           </svg>
           {/* events */}
@@ -108,7 +108,7 @@ export function MissionTimeline({ series }: { series: Series | null }) {
             </button>
           ))}
           {tip && (
-            <div className="pointer-events-none absolute bottom-full z-10 mb-2 w-max max-w-[260px] -translate-x-1/2 rounded-xl bg-umbra/95 px-3 py-1.5 text-[11.5px] leading-snug text-lens shadow-[0_0_0_1px_rgba(244,251,255,0.2)]" style={{ left: clamp(tip.x, 130, w - 130) }}>{tip.label}</div>
+            <div className="pointer-events-none absolute bottom-full z-10 mb-2 w-max max-w-[260px] -translate-x-1/2 rounded-xl bg-umbra/95 px-3 py-1.5 text-[11.5px] leading-snug text-lens shadow-[0_0_0_1px_rgba(242,238,230,0.2)]" style={{ left: clamp(tip.x, 130, w - 130) }}>{tip.label}</div>
           )}
           {/* playhead lens */}
           <div role="slider" tabIndex={0} aria-label="Date B" aria-valuemin={0} aria-valuemax={M_MAX} aria-valuenow={month} aria-valuetext={monthLabel(month)}
@@ -120,7 +120,7 @@ export function MissionTimeline({ series }: { series: Series | null }) {
               else if (ev.key === 'End') { setM(M_MAX); ev.preventDefault(); }
             }}
             className="lg absolute top-0 w-[18px] -translate-x-1/2 cursor-ew-resize" data-refract="true"
-            style={{ left: xOf(m), height: H - PAD.b + 4, ['--lg-r' as string]: '9px', background: 'linear-gradient(180deg, rgba(244,251,255,0.22), rgba(0,240,255,0.10))' }}>
+            style={{ left: xOf(m), height: H - PAD.b + 4, ['--lg-r' as string]: '9px', background: 'linear-gradient(180deg, rgba(242,238,230,0.22), rgba(156,203,235,0.10))' }}>
             <span className="absolute left-1/2 top-1 h-[calc(100%-8px)] w-px -translate-x-1/2 bg-lens/90" />
           </div>
         </div>

@@ -48,7 +48,7 @@ export function CaseThumb({ id, t, className = '' }: { id: SceneId; t: number; c
   return (
     <span className={'relative block overflow-hidden bg-umbra ' + className}>
       <canvas ref={ref} width={160} height={104} className={'h-full w-full transition-opacity duration-500 ' + (ready ? 'opacity-100' : 'opacity-0')} aria-hidden="true" />
-      <span className="pointer-events-none absolute inset-0 rounded-[inherit] shadow-[inset_0_0_0_1px_rgba(244,251,255,0.28)]" />
+      <span className="pointer-events-none absolute inset-0 rounded-[inherit] shadow-[inset_0_0_0_1px_rgba(242,238,230,0.28)]" />
     </span>
   );
 }

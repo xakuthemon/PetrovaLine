@@ -48,12 +48,3 @@ export function useSpecular(ref: RefObject<HTMLElement | null>): void {
 }
 
 /** Register an element that reads --gx / --gy for parallax. */
-export function useParallax(ref: RefObject<HTMLElement | null>): void {
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    bind();
-    parallax.add(el);
-    return () => { parallax.delete(el); };
-  }, [ref]);
-}

@@ -103,7 +103,7 @@ export function PhysicsDecoder() {
                   <section>
                     <div className="flex items-center gap-2">
                       <MapPin size={13} strokeWidth={1.8} className={pinned ? 'text-kapton' : 'text-slate'} />
-                      <span className="tele text-[8.5px] text-slate">{pinned ? 'Pinned pixel' : 'Default sample region'}</span>
+                      <span className="tele text-[8.5px] text-slate">{pinned ? 'Pinned pixel' : 'Sample'}</span>
                       {pinned && <button type="button" onClick={() => setPinned(null)} className="tele ml-auto text-[8px] text-lband underline decoration-lband/40 underline-offset-2">Release</button>}
                     </div>
                     <div className="mt-1.5 text-[17px] font-semibold leading-tight tracking-tight text-lens">{active ? active.cls : 'Acquiring…'}</div>
@@ -116,13 +116,13 @@ export function PhysicsDecoder() {
 
                   {/* mechanisms */}
                   <section>
-                    <div className="tele mb-2 text-[8.5px] text-slate">Scattering mechanism · select to highlight on the map</div>
+                    <div className="tele mb-2 text-[8.5px] text-slate">Scattering · tap to highlight</div>
                     <div className="grid grid-cols-3 gap-2">
                       {MECHS.map((x) => {
                         const on = mechanism === x.id, dom = derived?.dominant === x.id;
                         return (
                           <button key={x.id} type="button" aria-pressed={on} disabled={sensor === 'optical'} onClick={() => setMechanism(on ? null : x.id)}
-                            className={'relative rounded-2xl p-2 text-left transition-colors duration-200 disabled:opacity-40 ' + (on ? 'bg-kapton/15 shadow-[inset_0_0_0_1px_rgba(245,176,65,0.7),inset_0_1px_0_rgba(255,255,255,0.3)]' : 'bg-black/25 shadow-[inset_0_0_0_1px_rgba(244,251,255,0.1)] hover:shadow-[inset_0_0_0_1px_rgba(244,251,255,0.3)]')}>
+                            className={'relative rounded-2xl p-2 text-left transition-colors duration-200 disabled:opacity-40 ' + (on ? 'bg-kapton/15 shadow-[inset_0_0_0_1px_rgba(228,198,143,0.7),inset_0_1px_0_rgba(255,255,255,0.3)]' : 'bg-black/25 shadow-[inset_0_0_0_1px_rgba(242,238,230,0.1)] hover:shadow-[inset_0_0_0_1px_rgba(242,238,230,0.3)]')}>
                             <div className="aspect-[120/76]"><ScatterDiagram kind={x.id} active={on || (!mechanism && dom)} /></div>
                             <div className="mt-1 text-[11.5px] font-semibold leading-tight text-lens">{x.name}</div>
                             <div className="tele mt-1 text-[7px] leading-tight text-slate">{x.sub}</div>
@@ -160,7 +160,7 @@ export function PhysicsDecoder() {
                       <label className="mt-2 flex items-baseline justify-between text-[12px] font-medium text-lens" htmlFor="what-e">
                         Dielectric constant <span className="font-mono text-[10px] text-slate">ε {fmt(what.e, what.e < 10 ? 1 : 0)} · reflects {sim.refl} %</span>
                       </label>
-                      <input id="what-e" type="range" min={1} max={80} step={0.5} value={what.e} className="glass-range" style={{ ['--p' as string]: ((what.e - 1) / 79) * 100 + '%', ['--tint' as string]: '255, 42, 133' }}
+                      <input id="what-e" type="range" min={1} max={80} step={0.5} value={what.e} className="glass-range" style={{ ['--p' as string]: ((what.e - 1) / 79) * 100 + '%', ['--tint' as string]: '231, 165, 126' }}
                         onChange={(ev) => setWhat((w) => ({ ...w, e: Number(ev.target.value) }))} />
                       <div className="mt-2 flex items-center justify-between gap-3">
                         <span className="text-[12px] text-lens/85">{sim.regime}</span>
@@ -173,7 +173,7 @@ export function PhysicsDecoder() {
                   )}
 
                   {/* insight */}
-                  <section className="rounded-2xl p-3.5 shadow-[inset_0_0_0_1px_rgba(245,176,65,0.5),inset_0_1px_0_rgba(255,255,255,0.25)]" style={{ background: 'linear-gradient(180deg, rgba(245,176,65,0.16), rgba(245,176,65,0.05))' }}>
+                  <section className="rounded-2xl p-3.5 shadow-[inset_0_0_0_1px_rgba(228,198,143,0.5),inset_0_1px_0_rgba(255,255,255,0.25)]" style={{ background: 'linear-gradient(180deg, rgba(228,198,143,0.16), rgba(228,198,143,0.05))' }}>
                     <div className="tele text-[8.5px] text-kapton">Actionable mission insight</div>
                     <p className="mt-2 text-[13.5px] font-medium leading-snug text-lens">{def.mechanisms[shown].insight}</p>
                   </section>

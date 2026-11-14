@@ -282,7 +282,7 @@ export class MapEngine {
     const raw = (lon1 - lon0) / 6;
     const st = [0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1].find((q) => q >= raw) || 1;
     ctx.lineWidth = 1;
-    ctx.strokeStyle = 'rgba(244,251,255,0.09)';
+    ctx.strokeStyle = 'rgba(242,238,230,0.09)';
     ctx.beginPath();
     for (let lon = Math.ceil(lon0 / st) * st; lon < lon1; lon += st) {
       const x = Math.round(((lon - b.west) / (b.east - b.west)) * W * view.s + view.ox) + 0.5;
@@ -304,16 +304,16 @@ export class MapEngine {
       if (!a) continue;
       const x = Math.round(a[0] * W * view.s + view.ox), y = Math.round(a[1] * H * view.s + view.oy);
       if (x < 10 || y < 10 || x > cssW - 10 || y > cssH - 10) continue;
-      ctx.fillStyle = 'rgba(4,6,10,0.9)';
-      ctx.strokeStyle = '#F4FBFF';
+      ctx.fillStyle = 'rgba(7,11,16,0.9)';
+      ctx.strokeStyle = '#F2EEE6';
       ctx.lineWidth = 1;
       ctx.beginPath(); ctx.arc(x, y, 3.5, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
       const label = p.label.toUpperCase(), w = ctx.measureText(label).width;
       const left = x + 12 + w > cssW - 8;
       const tx = left ? x - 10 - w : x + 10;
-      ctx.fillStyle = 'rgba(4,6,10,0.62)';
+      ctx.fillStyle = 'rgba(7,11,16,0.62)';
       ctx.fillRect(tx - 4, y - 8, w + 8, 16);
-      ctx.fillStyle = 'rgba(244,251,255,0.92)';
+      ctx.fillStyle = 'rgba(242,238,230,0.92)';
       ctx.fillText(label, tx, y + 0.5);
     }
   }
