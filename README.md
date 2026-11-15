@@ -2,7 +2,7 @@
 
 NISAR radar explainer. 3D scroll story + a radar console. Made for NASA Space Apps 2026.
 
-Radar data is simulated from NASA datasets.
+Radar data is simulated from NISAR's public datasets.
 ## run
 
 ```
