@@ -24,7 +24,7 @@ In accordance with NASA Space Apps Challenge guidelines, AI tools were utilized 
 
 * **Tools Used:** Claude (Anthropic)
 * **How It Was Used:** 
-  * Assisting with TypeScript and Three.js boilerplate code for the 3D globe and scroll-story interactions.
+  * Assisting with TypeScript and Three.js boilerplate code for interactions.
   * Drafting and proofreading sections of project documentation.
 * **Human Contribution:** All project conception, NISAR scientific research, data simulation logic, visual design, and final code integration/testing were directed, verified, and authored by the team.
 ## credits
