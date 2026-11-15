@@ -18,6 +18,16 @@ npm run dev
 - demo deck: [submission/petrova-line-demo.pdf](submission/petrova-line-demo.pdf)
 - offline version: [release/petrova-line.html](release/petrova-line.html)
 
+## AI Usage & Attribution
+
+In accordance with NASA Space Apps Challenge guidelines, AI tools were utilized as development assistants during this project:
+
+* **Tools Used:** Claude (Anthropic)
+* **How It Was Used:** 
+  * Assisting with TypeScript and Three.js boilerplate code for the 3D globe and scroll-story interactions.
+  * Drafting and proofreading sections of project documentation.
+* **Human Contribution:** All project conception, NISAR scientific research, data simulation logic, visual design, and final code integration/testing were directed, verified, and authored by the team.
+* 
 ## credits
 
 NISAR info from [NASA/JPL](https://nisar.jpl.nasa.gov/nisarmission). Earth images are NASA Blue Marble / Black Marble, via [three-globe](https://github.com/vasturiano/three-globe) (MIT).
