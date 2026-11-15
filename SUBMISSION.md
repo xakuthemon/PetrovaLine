@@ -60,7 +60,7 @@ TypeScript, React, Vite, Tailwind CSS, Three.js (WebGL), GSAP, Lenis, Motion, zu
 ## Use of artificial intelligence
 
 - **Code.** Most of the code was written with an AI coding assistant (Claude Code, Anthropic), working from the team's concept, brief and design direction. This is also stated in `package.json`, in the page metadata (`<meta name="generator">`), in `src/main.tsx` and in the app's About panel.
-- **Data.** The radar scenes and every figure in them are synthetic. They are generated in the browser by code written with AI assistance, and every view that shows them carries a visible "Simulated" label.
+- **Data.** The radar scenes and every figure in them are synthetic. They are generated in the browser by code written with AI assistance; the app's About panel and the demo deck say so.
 - **Images.** The demo deck shows screenshots of the app. [Confirm: whether the Petrova Line logo artwork was made with an AI image tool. If it was, the guide asks for a visible watermark on it.]
 - **Idea.** AI was not used to choose how to answer the challenge. [Confirm this matches how your team worked.]
 - NASA branding is not used or modified.

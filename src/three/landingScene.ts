@@ -199,7 +199,7 @@ export function createLandingScene(canvas: HTMLCanvasElement, reduced: boolean):
       '  vec3 col = grade * (0.025 + 0.8 * dayR) * hs * (1.0 - 0.4 * cs * day);',
       // sun glint on open water
       '  vec3 h = normalize(uSunL + v); float nh = max(dot(p, h), 0.0);',
-      '  col += vec3(1.0, 0.92, 0.8) * (pow(nh, 220.0) * 0.6 + pow(nh, 40.0) * 0.07) * water * day * (1.0 - c);',
+      '  col += vec3(1.0, 0.92, 0.8) * (pow(nh, 220.0) * 0.6 + pow(nh, 60.0) * 0.045) * water * day * (1.0 - c);',
       // city lights on the night side
       '  float lights = texture2D(uNight, vUv).r;',
       '  col += vec3(1.0, 0.76, 0.40) * pow(lights, 1.6) * (1.0 - smoothstep(-0.18, 0.08, ndl0)) * (1.0 - 0.85 * c) * 0.95;',
@@ -246,7 +246,7 @@ export function createLandingScene(canvas: HTMLCanvasElement, reduced: boolean):
       'void main(){',
       '  vec2 p = (vUv - 0.5) * 2.6; float r = length(p);',
       '  float a = fract(0.25 - atan(p.y, p.x) / 6.2831853);',            // 0 at 12 o'clock, clockwise
-      '  float drawn = smoothstep(uDraw, uDraw - 0.02, a);',
+      '  float drawn = max(smoothstep(uDraw, uDraw - 0.02, a), step(0.999, uDraw));',   // closes fully once drawn
       '  float head = smoothstep(0.05, 0.0, abs(a - uDraw)) * step(uDraw, 0.999) * step(0.001, uDraw);',
       '  float w = 1.3 / uPx;',
       '  float core = exp(-pow((r - 1.0) / w, 2.0));',
@@ -555,6 +555,7 @@ export function createLandingScene(canvas: HTMLCanvasElement, reduced: boolean):
       focus: V(), dir: V(0.08, 0.16, 1).normalize(), up: V(0, 1, 0), dist: hero ? hero.dist : fit(0.44), nx: P ? 0 : 0.16, ny: hero ? hero.ny : 0.02, fov: 30,
       q: spinQ(spin), orbits: 1, sats: 1, nisar: 1, craft: 0, ribbons: 0, hit: 0, coverOn: 0, cover: 0, place: 0,
     };
+    if (FRAME_G > 0) { base.dist = fit(FRAME_G); base.nx = 0; base.ny = 0; }     // still renders: a centred globe
     switch (id) {
       case 'hero': return base;
       case 'craft': {
@@ -595,6 +596,10 @@ export function createLandingScene(canvas: HTMLCanvasElement, reduced: boolean):
   // Drop pixel density when frames run long, win it back after a run of fast frames.
   // ?capture locks it at full density for screenshots.
   const capture = /[?&]capture\b/.test(location.search);
+  // ?capture&globe=0.6 centres the opening globe at that share of the screen height (tools/render-globe.mjs)
+  const FRAME_G = capture ? Number(new URLSearchParams(location.search).get('globe')) || 0 : 0;
+  // still renders draw at twice the density, where one-pixel orbit lines read faint: lift them
+  const LINE_BOOST = FRAME_G > 0 ? 2.1 : 1;
   const DPR_TOP = Math.min(window.devicePixelRatio || 1, capture ? 2 : 1.6);
   const DPR_MIN = Math.min(0.8, DPR_TOP);
   let dpr = DPR_TOP;
@@ -603,7 +608,7 @@ export function createLandingScene(canvas: HTMLCanvasElement, reduced: boolean):
     dpr = d;
     renderer.setPixelRatio(dpr);
     renderer.setSize(cssW, cssH, false);
-    satU.uDpr.value = dpr;
+    satU.uDpr.value = dpr * (FRAME_G > 0 ? 1.35 : 1);
   };
   function adapt(dt: number, now: number): void {
     if (capture || dt <= 0 || dt > 120) return;           // first frame, tab switch or a one-off stall
@@ -708,7 +713,7 @@ export function createLandingScene(canvas: HTMLCanvasElement, reduced: boolean):
 
     // orbits and satellites
     orbitGroup.rotation.y = t * 0.012 + (1 - push) * -0.5;
-    orbitU.uDraw.value = intro.orbits; orbitU.uAlpha.value = P.orbits;
+    orbitU.uDraw.value = intro.orbits; orbitU.uAlpha.value = P.orbits * LINE_BOOST;
     satU.uAlpha.value = intro.sats * P.sats;
     for (let i = 0; i < orbs.length; i++) {
       const o = orbs[i], b2 = Math.sqrt(1 - o.e * o.e);
@@ -720,7 +725,7 @@ export function createLandingScene(canvas: HTMLCanvasElement, reduced: boolean):
     }
     (satGeo.attributes.position as THREE.BufferAttribute).needsUpdate = true;
     nisarU.uDraw.value = ease(clamp(intro.orbits * 1.4 - 0.2, 0, 1));
-    nisarU.uAlpha.value = P.nisar;
+    nisarU.uAlpha.value = P.nisar * Math.min(LINE_BOOST, 1.6);
     const dp = dotGeo.attributes.position as THREE.BufferAttribute;
     (dp.array as Float32Array).set([craft.position.x, craft.position.y, craft.position.z]);
     dp.needsUpdate = true;

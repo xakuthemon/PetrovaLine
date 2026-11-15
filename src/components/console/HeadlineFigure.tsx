@@ -15,10 +15,7 @@ export function HeadlineFigure({ series }: { series: Series | null }) {
         {mm ? <>{mm[1]}<span className="text-[0.42em] font-medium tracking-normal text-cream/80">{mm[2]}</span></> : head.value}
       </div>
       <div className="mt-1 text-[13.5px] text-cream/80 short:hidden">{head.label}</div>
-      <div className="mt-2 flex items-center gap-2 text-[12.5px] text-fog max-sm:hidden short:hidden">
-        <span>{def.region}</span>
-        <span className="rounded-full px-2 py-0.5 text-[11px] text-cream/70 shadow-[inset_0_0_0_1px_rgba(244,236,227,0.25)]">Simulated</span>
-      </div>
+      <div className="mt-2 text-[12.5px] text-fog max-sm:hidden short:hidden">{def.region}</div>
     </div>
   );
 }

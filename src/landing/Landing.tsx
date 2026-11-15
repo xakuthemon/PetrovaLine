@@ -288,9 +288,8 @@ export default function Landing() {
             </span>
             <span ref={(n) => { (dateRefs.current[i] ||= { label: null, bar: null }).label = n; }} className="min-w-[64px] text-right text-lens">{monthLabel(p.a)}</span>
           </div>
-          <div data-f className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 short:mt-3">
+          <div data-f className="mt-6 short:mt-3">
             <button type="button" onClick={() => openConsole(p.scene)} className="link-u text-[13px] text-lens/85">Open in console <ArrowUpRight size={14} strokeWidth={1.6} /></button>
-            <span className="eyebrow text-[9.5px] text-lens/40">Simulated</span>
           </div>
         </div>
       </section>
@@ -373,7 +372,7 @@ export default function Landing() {
             <h2 className="display max-w-[14ch] text-[clamp(46px,6.4vw,112px)] short:text-[40px]"><Words text="Earth is always" /> <Gold>dancing.</Gold></h2>
             <div className="mt-9 flex flex-col items-center gap-5 short:mt-5">
               <Cta onClick={() => openConsole()}>Open the console</Cta>
-              <p data-f className="eyebrow text-[9.5px] text-lens/40">Simulated scenes · NASA Blue Marble</p>
+              <p data-f className="eyebrow text-[9.5px] text-lens/40">Earth imagery · NASA Blue Marble</p>
             </div>
           </section>
 

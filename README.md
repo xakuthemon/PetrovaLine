@@ -27,6 +27,7 @@ npm run dev
 | `npm run build:embed` | body-only fragment for sandboxed hosts |
 | `node tools/make-deck.mjs` | render the demo deck to PDF (needs Playwright) |
 | `node tools/make-icons.mjs` | rebuild the app icons from the logo geometry (needs Playwright) |
+| `node tools/render-globe.mjs` | render the opening globe with its orbits as 4K and 4096 × 4096 stills in `submission/` (needs Playwright and `npm run build:single` first) |
 
 The workflow in `.github/workflows/pages.yml` publishes `dist/` to GitHub Pages on every push to `main` once Pages is set to *GitHub Actions* in the repository settings.
 
@@ -77,7 +78,7 @@ Each scene maps a date to a per-pixel state (roughness, dielectric constant, veg
 
 ## Use of AI
 
-Most of the code was written with an AI coding assistant (Claude Code, Anthropic) from the team's concept and design direction. The radar scenes are synthetic and labelled "Simulated" wherever they appear. See [SUBMISSION.md](SUBMISSION.md#use-of-artificial-intelligence).
+Most of the code was written with an AI coding assistant (Claude Code, Anthropic) from the team's concept and design direction. The radar scenes are synthetic; the app's About panel says so. See [SUBMISSION.md](SUBMISSION.md#use-of-artificial-intelligence).
 
 ## Data and credits
 
