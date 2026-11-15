@@ -89,7 +89,7 @@ NISAR is a joint NASA–ISRO mission; the S-band radar is ISRO's. We used the pu
 
 ## Before you submit
 
-- [ ] Team name and members here and on slide 1 of `submission/deck/index.html`, then rebuild the PDF with `node tools/make-deck.mjs`
+- [ ] Team name and members here (to put them on slide 1 of the deck too, edit `submission/deck/index.html` and rebuild the PDF with `node tools/make-deck.mjs`)
 - [ ] Confirm the challenge title and the two "Confirm" notes under *Use of artificial intelligence*
 - [ ] Switch on GitHub Pages: Settings › Pages › Source: *GitHub Actions*, then merge to `main` (the workflow in `.github/workflows/pages.yml` publishes the app)
 - [ ] Open every link in a private window to check that none asks for a login
