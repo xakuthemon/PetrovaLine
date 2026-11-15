@@ -1,6 +1,6 @@
 /* Petrova Line service worker: the app works offline after the first visit.
    Pages: network first, cached copy when offline. Hashed assets: cache first. */
-const CACHE = 'petrova-line-v4';
+const CACHE = 'petrova-line-v5';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon.svg', './icons/icon-192.png', './icons/icon-512.png'];
 
 self.addEventListener('install', (e) => {

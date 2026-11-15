@@ -2,11 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Petrova Line. Ink ground, cream discs, one crimson line: the palette of the logo.
-   One type family (Archivo, with a width axis) carries everything; a mono only for the
-   wavelength tag and coordinates. */
+/* Petrova Line. The console wears the logo's palette (ink ground, cream discs, one crimson
+   line) in Archivo; the story is a navy-and-champagne stage set in Inter Tight, with a mono
+   for small labels. */
 
 @font-face { font-family: "Archivo"; font-style: normal; font-weight: 100 900; font-stretch: 62% 125%; font-display: swap; src: url("@fontsource-variable/archivo/files/archivo-latin-wdth-normal.woff2") format("woff2-variations"); }
+@font-face { font-family: "Inter Tight Variable"; font-style: normal; font-weight: 100 900; font-display: swap; src: url("@fontsource-variable/inter-tight/files/inter-tight-latin-wght-normal.woff2") format("woff2-variations"); }
 @font-face { font-family: "JetBrains Mono"; font-style: normal; font-weight: 100 800; font-display: swap; src: url("@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2") format("woff2-variations"); unicode-range: U+0000-00FF, U+2000-206F, U+2212; }
 @font-face { font-family: "JetBrains Mono"; font-style: normal; font-weight: 100 800; font-display: swap; src: url("@fontsource-variable/jetbrains-mono/files/jetbrains-mono-greek-wght-normal.woff2") format("woff2-variations"); unicode-range: U+0370-03FF; }
 
@@ -45,7 +46,7 @@ button { -webkit-tap-highlight-color: transparent; }
 .no-scrollbar::-webkit-scrollbar { display: none; }
 
 /* ---------------------------------------------------------------- type */
-.wordmark { font-stretch: 125%; font-weight: 420; letter-spacing: 0.34em; text-transform: uppercase; line-height: 1; }
+.wordmark { font-family: Archivo, system-ui, sans-serif; font-stretch: 125%; font-weight: 420; letter-spacing: 0.34em; text-transform: uppercase; line-height: 1; }
 .display { font-stretch: 108%; font-weight: 520; letter-spacing: -0.035em; line-height: 0.94; text-wrap: balance; }
 .label { font-size: 12.5px; font-weight: 500; color: var(--fog); }
 /* old class names, now calm sentence-case labels */
@@ -105,24 +106,56 @@ input[type="range"].range::-moz-range-thumb { width: 18px; height: 18px; border:
 }
 
 /* ---------------------------------------------------------------- landing */
-.landing { overscroll-behavior: none; scrollbar-width: none; }
+.landing {
+  overscroll-behavior: none; scrollbar-width: none;
+  font-family: "Inter Tight Variable", "Inter Tight", Inter, system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  font-size: 14px; font-variant-numeric: tabular-nums; color: #F2EEE6;
+}
 .landing::-webkit-scrollbar { display: none; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
 .lenis.lenis-stopped { overflow: hidden; }
 .stage {
   background:
-    radial-gradient(70% 60% at 86% 0%, rgba(52, 56, 84, 0.55), transparent 70%),
-    linear-gradient(180deg, #1A1B29 0%, #161723 55%, #121320 100%);
-  color: var(--cream);
+    radial-gradient(70% 60% at 88% 4%, rgba(46, 70, 94, 0.55), transparent 70%),
+    radial-gradient(60% 50% at 8% 100%, rgba(10, 16, 24, 0.9), transparent 70%),
+    linear-gradient(180deg, #0D1620 0%, #091017 55%, #070B10 100%);
 }
 .slide { visibility: hidden; opacity: 0; z-index: 10; pointer-events: none; }
 .slide button, .slide a { pointer-events: auto; }
-.rise-mask { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.18em; margin-bottom: -0.18em; padding-right: 0.03em; margin-right: -0.03em; }
+.landing .display { font-weight: 300; font-stretch: 100%; letter-spacing: -0.05em; line-height: 0.95; font-variation-settings: "wght" 300; text-wrap: balance; }
+.gold-text {
+  background: linear-gradient(100deg, #F4E2BA 0%, #D8B77C 42%, #F7EACB 58%, #C59E62 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  padding-bottom: 0.16em; margin-bottom: -0.16em;   /* the clip area must reach the descenders */
+}
+.eyebrow { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 10.5px; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(242, 238, 230, 0.8); }
+.rise-mask { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.3em; margin-bottom: -0.3em; padding-right: 0.04em; margin-right: -0.04em; }
 .rise { display: inline-block; will-change: transform; }
-.scrim { background: linear-gradient(90deg, rgba(23, 24, 36, 0.86) 0%, rgba(23, 24, 36, 0.55) 32%, rgba(23, 24, 36, 0) 56%); }
-.scrim-low { background: linear-gradient(0deg, rgba(23, 24, 36, 0.92) 0%, rgba(23, 24, 36, 0.6) 40%, rgba(23, 24, 36, 0) 62%); }
-@media (max-width: 767px), (max-aspect-ratio: 17/20) { .scrim { background: linear-gradient(180deg, rgba(23, 24, 36, 0.9) 0%, rgba(23, 24, 36, 0.55) 42%, rgba(23, 24, 36, 0) 64%); } }
+.cta {
+  display: inline-flex; align-items: center; gap: 22px; height: 58px; padding: 0 26px 0 30px; border-radius: 9999px;
+  background: #F2EEE6; color: #0A1118; font-size: 15px; font-weight: 450; letter-spacing: -0.01em; white-space: nowrap;
+  box-shadow: 0 18px 40px -18px rgba(242, 238, 230, 0.45), inset 0 -2px 0 rgba(0, 0, 0, 0.08);
+  transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.5s;
+}
+.cta:hover { transform: translateY(-2px); box-shadow: 0 26px 50px -18px rgba(242, 238, 230, 0.55), inset 0 -2px 0 rgba(0, 0, 0, 0.08); }
+.cta:active { transform: translateY(0) scale(0.98); }
+.pill-light {
+  display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 16px 0 20px; border-radius: 9999px;
+  background: rgba(242, 238, 230, 0.94); color: #0A1118; font-size: 13.5px; font-weight: 500;
+  transition: background 0.3s, transform 0.3s;
+}
+.pill-light:hover { background: #fff; transform: translateY(-1px); }
+.pill-icon {
+  display: grid; place-items: center; width: 40px; height: 40px; border-radius: 9999px; color: #F2EEE6;
+  box-shadow: inset 0 0 0 1px rgba(242, 238, 230, 0.22); transition: background 0.3s;
+}
+.pill-icon:hover { background: rgba(242, 238, 230, 0.1); }
+.link-u { display: inline-flex; align-items: center; gap: 8px; padding-bottom: 6px; background: linear-gradient(currentColor, currentColor) 0 100% / 100% 1px no-repeat; opacity: 0.9; transition: background-size 0.5s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.3s; }
+.link-u:hover { background-size: 40% 1px; opacity: 1; }
 .scroll-cue > span { animation: cue 1.8s cubic-bezier(0.6, 0, 0.4, 1) infinite; }
+.scrim { background: linear-gradient(90deg, rgba(7, 11, 16, 0.82) 0%, rgba(7, 11, 16, 0.55) 30%, rgba(7, 11, 16, 0) 55%); }
+.scrim-low { background: linear-gradient(0deg, rgba(7, 11, 16, 0.9) 0%, rgba(7, 11, 16, 0.6) 38%, rgba(7, 11, 16, 0) 60%); }
+@media (max-width: 767px), (max-aspect-ratio: 17/20) { .scrim { background: linear-gradient(180deg, rgba(7, 11, 16, 0.85) 0%, rgba(7, 11, 16, 0.5) 40%, rgba(7, 11, 16, 0) 62%); } }
 
 /* ---------------------------------------------------------------- print */
 #dossier { display: none; }

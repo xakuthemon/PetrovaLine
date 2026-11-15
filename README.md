@@ -32,9 +32,9 @@ The workflow in `.github/workflows/pages.yml` publishes `dist/` to GitHub Pages 
 
 ## The app
 
-**Story** (`#story`). One WebGL stage; scrolling moves the camera between nine slides, and each slide builds in a few words.
+**Story** (`#story`). One WebGL stage on a navy-and-champagne set; scrolling moves the camera between nine slides, each slide builds in a few words, and a scroll that stops between two slides glides on to the nearer one.
 
-1. The planet, the constellation and NISAR, with its orbit drawn as the crimson line of the logo
+1. The planet inside a few dozen gold orbits, with NISAR on its 747 km sun-synchronous orbit
 2. The spacecraft and its 12 m reflector
 3. The two radar waves, L-band 24 cm and S-band 9.4 cm, at their true ratio
 4. The 12-day repeat cycle filling the globe
@@ -54,13 +54,13 @@ Keys: `↓` `↑` `Space` `PageDown` `PageUp` `Home` `End`.
 
 Keys: `Space` play · `←` `→` one month · `1`–`4` scene.
 
-**Devices.** Phones (portrait and landscape), tablets, desktops and wide screens. Installable (Add to Home Screen, or the install button in Chromium browsers); works offline after the first visit. Reduced motion turns off smooth scrolling, the launch animation and text builds, and turns camera moves into cuts.
+**Devices.** Phones (portrait and landscape), tablets, desktops and wide screens. Installable (Add to Home Screen, or the install button in Chromium browsers); works offline after the first visit. Reduced motion turns off smooth scrolling, the opening animation and text builds, and turns camera moves into cuts.
 
 ## How it works
 
 ```
 src/
-  brand/                 logo mark (drawn in code from the logo artwork) and launch screen
+  brand/                 logo mark, drawn in code from the logo artwork
   landing/               the story: slides and scroll map, text builds, slab renderer in a worker
   three/landingScene.ts  globe, orbits, NISAR and its trail, spacecraft, waves, coverage, terrain tiles
   three/SatelliteModel.ts  procedural NISAR spacecraft
@@ -71,6 +71,8 @@ public/                  manifest, icons, service worker
 submission/              demo deck (HTML source, screens, PDF)
 ```
 
+**The Earth** uses 4K day and night maps (loaded after the opening, when the page is idle), terrain shading from a topography map, a cloud layer that casts shadows, sun glint on open water and a thin atmosphere. The page runs one animation loop for smooth scrolling and the 3D stage, compiles every shader and uploads every texture before the camera needs it, and lowers the stage's pixel density on slower GPUs to hold the frame rate.
+
 Each scene maps a date to a per-pixel state (roughness, dielectric constant, vegetation volume, vertical structure, coherence, line-of-sight motion). One backscatter function turns it into HH, HV and VV; the same function drives the pixel panel. Interferograms wrap `2 × displacement / wavelength`: one fringe is 11.9 cm at L-band and 4.7 cm at S-band.
 
 ## Use of AI
@@ -80,6 +82,6 @@ Most of the code was written with an AI coding assistant (Claude Code, Anthropic
 ## Data and credits
 
 - NISAR mission facts: [NASA/JPL](https://nisar.jpl.nasa.gov/nisarmission)
-- Earth imagery: NASA [Blue Marble](https://visibleearth.nasa.gov/collection/1484/blue-marble) and [Black Marble](https://earthobservatory.nasa.gov/features/NightLights), downscaled from the examples of [three-globe](https://github.com/vasturiano/three-globe)
-- Fonts: Archivo and JetBrains Mono (SIL Open Font License), via Fontsource
+- Earth imagery: NASA [Blue Marble](https://visibleearth.nasa.gov/collection/1484/blue-marble) and [Black Marble](https://earthobservatory.nasa.gov/features/NightLights); these, the topography map, the water mask and the cloud map come from the examples of [three-globe](https://github.com/vasturiano/three-globe) (MIT)
+- Fonts: Inter Tight, Archivo and JetBrains Mono (SIL Open Font License), via Fontsource
 - Libraries: React, Vite, TypeScript, Tailwind CSS, Three.js, GSAP, Lenis, Motion, zustand, lucide-react

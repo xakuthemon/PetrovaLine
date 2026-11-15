@@ -9,6 +9,8 @@ export default {
       colors: {
         ink, night, cream, crimson, fog, steel,
         panel: '#1D1F2E',
+        // the story's navy-and-champagne stage
+        gold: '#E4C68F', ice: '#9CCBEB', copper: '#E7A57E',
         // older token names still used by a few console parts
         void: night, umbra: ink, lens: cream, slate: fog, lband: crimson, sband: steel, kapton: crimson,
       },

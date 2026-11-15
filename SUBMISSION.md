@@ -41,13 +41,13 @@ Once the branch is merged, use `.../blob/main/submission/petrova-line-demo.pdf`.
 
 **What it does**
 
-- *Story*: nine scroll slides over one 3D stage. The camera moves from the constellation to NISAR, follows the two radar waves to the ground, shows the 12-day coverage, then visits four places, where a terrain tile rises from the globe and a scan line sweeps from the "before" to the "after" radar image.
+- *Story*: nine scroll slides over one 3D stage. The camera moves from a planet wrapped in orbits to NISAR, follows the two radar waves to the ground, shows the 12-day coverage, then visits four places, where a terrain tile rises from the globe and a scan line sweeps from the "before" to the "after" radar image.
 - *Console*: a full-screen radar map with a before/after divider, five channels (HH, HV, VV, InSAR, false colour), L or S band, an optical view with clouds for comparison, a change map, a 2020–2026 timeline, a pixel panel that splits the echo into surface, volume and double-bounce scattering with what-if sliders for roughness and moisture, and an export of the brief as Markdown, JSON or text.
 - *App*: installs on phones, tablets and desktops, and works offline after the first visit.
 
 **How it works**
 
-Each scene maps a date to a per-pixel surface state: roughness, dielectric constant (moisture), vegetation volume, vertical structure, coherence and line-of-sight motion. One backscatter model turns that state into HH, HV and VV at L- or S-band, and the same model drives the pixel panel. Interferograms wrap `2 × displacement / wavelength`, so one fringe is 11.9 cm at L-band and 4.7 cm at S-band. The globe uses NASA Blue Marble and Black Marble imagery. NISAR's orbit is drawn at its real altitude and inclination.
+The globe is drawn from NASA's 4K Blue Marble and Black Marble maps with terrain shading, cloud cover and sun glint, and the 3D stage adapts its resolution to stay smooth on laptops and phones. Each scene maps a date to a per-pixel surface state: roughness, dielectric constant (moisture), vegetation volume, vertical structure, coherence and line-of-sight motion. One backscatter model turns that state into HH, HV and VV at L- or S-band, and the same model drives the pixel panel. Interferograms wrap `2 × displacement / wavelength`, so one fringe is 11.9 cm at L-band and 4.7 cm at S-band. The globe uses NASA Blue Marble and Black Marble imagery. NISAR's orbit is drawn at its real altitude and inclination.
 
 **Benefits**
 
@@ -69,7 +69,7 @@ TypeScript, React, Vite, Tailwind CSS, Three.js (WebGL), GSAP, Lenis, Motion, zu
 
 - **NISAR mission facts** (NASA/JPL): 747 km sun-synchronous orbit at 98.4°, 12-day repeat, 12 m mesh reflector, L-band (24 cm) and S-band (3.2 GHz, about 9.4 cm; NASA's quick facts round it to 10 cm), launch on 30 July 2025. These drive the orbit, the coverage animation, the two wave ribbons, the fringe spacing and the band switch. https://nisar.jpl.nasa.gov/nisarmission
 - **NISAR data products** (NASA Earthdata): what the mission's products will contain; the console mirrors those layers (backscatter by polarisation, interferograms, coherence). https://www.earthdata.nasa.gov/news/now-nisar-launched-heres-what-you-can-expect-from-data
-- **Blue Marble** (NASA Visible Earth): the globe's surface texture. https://visibleearth.nasa.gov/collection/1484/blue-marble
+- **Blue Marble** (NASA Visible Earth): the globe's 4K day map. https://visibleearth.nasa.gov/collection/1484/blue-marble
 - **Black Marble** (NASA Earth Observatory): city lights on the night side of the globe. https://earthobservatory.nasa.gov/features/NightLights
 
 The radar scenes themselves are simulated with these parameters; they are not NISAR measurements. Loading NISAR level-2 products from NASA's Alaska Satellite Facility archive is the next step.
@@ -82,9 +82,9 @@ NISAR is a joint NASA–ISRO mission; the S-band radar is ISRO's. We used the pu
 
 - NISAR quick facts, NASA/JPL press kit: https://www.jpl.nasa.gov/press-kits/nisar/quick-facts/
 - NISAR mission overview, NASA Science: https://science.nasa.gov/mission/nisar/
-- Earth textures: NASA Blue Marble and Black Marble, taken (downscaled) from the examples of the `three-globe` package (MIT): https://github.com/vasturiano/three-globe
+- Earth maps: NASA Blue Marble and Black Marble, plus a topography map, a water mask and a cloud map, all taken from the examples of the `three-globe` package (MIT): https://github.com/vasturiano/three-globe
 - Libraries: React, Vite, TypeScript, Tailwind CSS, Three.js, GSAP, Lenis, Motion, zustand, lucide-react
-- Fonts: Archivo and JetBrains Mono (SIL Open Font License), bundled from Fontsource
+- Fonts: Inter Tight, Archivo and JetBrains Mono (SIL Open Font License), bundled from Fontsource
 - All other code, the scene simulation and the 3D models are original to this project
 
 ## Before you submit
