@@ -27,7 +27,6 @@ In accordance with NASA Space Apps Challenge guidelines, AI tools were utilized 
   * Assisting with TypeScript and Three.js boilerplate code for the 3D globe and scroll-story interactions.
   * Drafting and proofreading sections of project documentation.
 * **Human Contribution:** All project conception, NISAR scientific research, data simulation logic, visual design, and final code integration/testing were directed, verified, and authored by the team.
-* 
 ## credits
 
 NISAR info from [NASA/JPL](https://nisar.jpl.nasa.gov/nisarmission). Earth images are NASA Blue Marble / Black Marble, via [three-globe](https://github.com/vasturiano/three-globe) (MIT).
