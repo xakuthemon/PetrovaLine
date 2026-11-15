@@ -15,8 +15,9 @@ npm run dev
 ## stuff
 
 - submission text: [SUBMISSION.md](SUBMISSION.md)
-- demo deck: [submission/petrova-line-demo.pdf](submission/petrova-line-demo.pdf)
+- demo deck for brief info about app: [submission/petrova-line-demo.pdf](submission/petrova-line-demo.pdf)
 - offline version: [release/petrova-line.html](release/petrova-line.html)
+- demo web: [https://xakuthemon.github.io/PetrovaLine/]
 
 ## AI Usage & Attribution
 
